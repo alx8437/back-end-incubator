@@ -11,7 +11,8 @@
   "scripts": {
     "watch": "tsc -w",
     "dev": "yarn nodemon --inspect dist/index.js",
-    "build": "tsc"
+    "build": "tsc",
+    "start": "dist/index.js"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
