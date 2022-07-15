@@ -4,7 +4,7 @@ import cors from 'cors';
 const app = express();
 app.use(cors());
 
-const port = 5001;
+const port = 5000;
 
 const videos = [
     {id: 1, title: 'About JS - 01', author: 'it-incubator.eu'},
@@ -15,7 +15,7 @@ const videos = [
 ]
 
 app.get('/', (req: any, res: any) => {
-    let helloWorld = 'Go';
+    let helloWorld = 'Go study';
     res.send(helloWorld)
 })
 
