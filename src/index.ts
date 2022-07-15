@@ -4,7 +4,7 @@ import cors from 'cors';
 const app = express();
 app.use(cors());
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 const videos = [
     {id: 1, title: 'About JS - 01', author: 'it-incubator.eu'},
