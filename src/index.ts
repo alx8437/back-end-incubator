@@ -15,7 +15,7 @@ const videos = [
 ]
 
 app.get('/', (req: any, res: any) => {
-    let helloWorld = 'Go study';
+    let helloWorld = 'Go study!!!';
     res.send(helloWorld)
 })
 
