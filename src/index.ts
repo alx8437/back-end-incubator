@@ -1,46 +1,84 @@
 import express, { Response, Request } from "express";
 import cors from "cors";
+import bodyParser from "body-parser";
 
 const app = express();
-app.use(cors());
+const corsMiddleware = cors();
+const bodyParserMiddleware = bodyParser();
+
+app.use(corsMiddleware);
+app.use(bodyParserMiddleware);
 
 const port = process.env.PORT || 5000;
 
-// const videos = [
-//     {id: 1, title: 'About JS - 01', author: 'it-incubator.eu'},
-//     {id: 2, title: 'About JS - 02', author: 'it-incubator.eu'},
-//     {id: 3, title: 'About JS - 03', author: 'it-incubator.eu'},
-//     {id: 4, title: 'About JS - 04', author: 'it-incubator.eu'},
-//     {id: 5, title: 'About JS - 05', author: 'it-incubator.eu'},
-// ]
+const products = [
+  { id: 0, title: "cheese" },
+  { id: 1, title: "mushrooms" },
+];
 
-const products = [{ title: "cheese" }, { title: "mushrooms" }];
-const addresses = [{ title: "WallStreet" }, { title: "Gagarin" }];
-
-app.get("/", (req: any, res: any) => {
+app.get("/", (req: Request, res: Response) => {
   let helloWorld = "Go study123123123";
   res.send(helloWorld);
 });
 
 app.get("/products", (req: Request, res: Response) => {
-  res.send(products);
+  const searchString = req.query.title as string;
+  console.log(searchString);
+  if (searchString) {
+    res.send(
+      products.filter((product) => product.title.indexOf(searchString) > -1)
+    );
+  } else {
+    res.send(products);
+  }
 });
 
-// app.get('/videos', (req: any, res: any) => {
-//     res.status(200);
-//     res.send(videos)
-// })
+app.get("/products/:id", (req: Request, res: Response) => {
+  const product = products.find(
+    (product) => product.id === Number(req.params.id)
+  );
 
-// app.get('/videos/:videoId', (req: any, res: any) => {
-//     const { videoId } = req.params
-//     const currentVideo = videos.filter(video => video.id === JSON.parse(videoId));
-//     if (currentVideo.length) {
-//         res.send(currentVideo);
-//     } else {
-//         res.status(404);
-//         res.send("This video is not exit")
-//     }
-// })
+  if (product) {
+    res.send(product);
+  } else {
+    res.send(404);
+  }
+});
+
+app.put("/products/:id", (req: Request, res: Response) => {
+  const product = products.find(
+    (product) => product.id === Number(req.params.id)
+  );
+
+  if (product) {
+    product.title = req.body.title;
+    res.send(product);
+  } else {
+    res.send(404);
+  }
+});
+
+app.post("/products", (req: Request, res: Response) => {
+  const newProduct = {
+    id: Number(new Date()),
+    title: req.body.title,
+  };
+
+  products.push(newProduct);
+  res.status(201).send(newProduct);
+});
+
+app.delete("/products/:id", (req: Request, res: Response) => {
+  const index = products.findIndex(
+    (product) => product.id === Number(req.params.id)
+  );
+  if (index > -1) {
+    products.splice(index, 1);
+    res.send(204);
+  } else {
+    res.send(404);
+  }
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
