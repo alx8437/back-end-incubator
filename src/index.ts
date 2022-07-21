@@ -52,7 +52,7 @@ app.post("/videos", (req: Request, res: Response) => {
     videos.push(newVideo);
     res.status(201).send(newVideo);
   } else {
-    res.status(404).send(getErrorMessage("title"));
+    res.status(400).send(getErrorMessage("title"));
   }
 });
 
