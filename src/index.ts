@@ -41,6 +41,7 @@ app.get("/videos/:id", (req: Request, res: Response) => {
 
 app.post("/videos", (req: Request, res: Response) => {
   const { title } = req.body;
+
   if (titleValidation(title)) {
     const newVideo = {
       id: Number(new Date()),

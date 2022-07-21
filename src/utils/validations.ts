@@ -1,7 +1,7 @@
-export const titleValidation = (title: string) => {
-  if (title.length && title.length < 40) {
-    return true;
+export const titleValidation = (title: string | null) => {
+  if (!title) {
+    return false;
   }
 
-  return false;
+  return !!(title.length && title.length < 40);
 };
