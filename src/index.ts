@@ -68,8 +68,16 @@ app.delete("/videos/:id", (req: Request, res: Response) => {
 });
 
 app.put("/videos/:id", (req, res) => {
+  if (!req.params.id) {
+    res.send(404);
+  }
+
   const { title } = req.body;
   const video = videos.find((video) => video.id === Number(req.params.id));
+
+  if (!video) {
+    res.send(404);
+  }
 
   if (titleValidation(title) && video) {
     video.title = title;
