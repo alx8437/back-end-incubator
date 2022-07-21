@@ -1,6 +1,8 @@
 import express, { Response, Request } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import { titleValidation } from "./utils/validations";
+import { getErrorMessage } from "./utils/errors";
 
 const app = express();
 const corsMiddleware = cors();
@@ -11,72 +13,68 @@ app.use(bodyParserMiddleware);
 
 const port = process.env.PORT || 5000;
 
-const products = [
-  { id: 0, title: "cheese" },
-  { id: 1, title: "mushrooms" },
+const videos = [
+  { id: 1, title: "About JS - 01", author: "it-incubator.eu" },
+  { id: 2, title: "About JS - 02", author: "it-incubator.eu" },
+  { id: 3, title: "About JS - 03", author: "it-incubator.eu" },
+  { id: 4, title: "About JS - 04", author: "it-incubator.eu" },
+  { id: 5, title: "About JS - 05", author: "it-incubator.eu" },
 ];
 
 app.get("/", (req: Request, res: Response) => {
-  let helloWorld = "Go study123123123";
-  res.send(helloWorld);
+  res.send(`App has started on ${port} port`);
 });
 
-app.get("/products", (req: Request, res: Response) => {
-  const searchString = req.query.title as string;
-  console.log(searchString);
-  if (searchString) {
-    res.send(
-      products.filter((product) => product.title.indexOf(searchString) > -1)
-    );
-  } else {
-    res.send(products);
-  }
+app.get("/videos", (req: Request, res: Response) => {
+  res.send(videos);
 });
 
-app.get("/products/:id", (req: Request, res: Response) => {
-  const product = products.find(
-    (product) => product.id === Number(req.params.id)
-  );
+app.get("/videos/:id", (req: Request, res: Response) => {
+  const video = videos.find((video) => video.id === Number(req.params.id));
 
-  if (product) {
-    res.send(product);
+  if (video) {
+    res.send(video);
   } else {
     res.send(404);
   }
 });
 
-app.put("/products/:id", (req: Request, res: Response) => {
-  const product = products.find(
-    (product) => product.id === Number(req.params.id)
-  );
+app.post("/videos", (req: Request, res: Response) => {
+  const { title } = req.body;
+  if (titleValidation(title)) {
+    const newVideo = {
+      id: Number(new Date()),
+      title: req.body.title,
+      author: req.body.author,
+    };
 
-  if (product) {
-    product.title = req.body.title;
-    res.send(product);
+    videos.push(newVideo);
+    res.status(201).send(newVideo);
   } else {
-    res.send(404);
+    res.status(404).send(getErrorMessage("title"));
   }
 });
 
-app.post("/products", (req: Request, res: Response) => {
-  const newProduct = {
-    id: Number(new Date()),
-    title: req.body.title,
-  };
+app.delete("/videos/:id", (req: Request, res: Response) => {
+  const index = videos.findIndex((video) => video.id === Number(req.params.id));
 
-  products.push(newProduct);
-  res.status(201).send(newProduct);
-});
-
-app.delete("/products/:id", (req: Request, res: Response) => {
-  const index = products.findIndex(
-    (product) => product.id === Number(req.params.id)
-  );
   if (index > -1) {
-    products.splice(index, 1);
+    videos.splice(index, 1);
     res.send(204);
   } else {
     res.send(404);
+  }
+});
+
+app.put("/videos/:id", (req, res) => {
+  const { title } = req.body;
+  const video = videos.find((video) => video.id === Number(req.params.id));
+
+  if (titleValidation(title) && video) {
+    video.title = title;
+    res.status(204).send(video);
+  } else {
+    res.status(404).send(getErrorMessage("title"));
   }
 });
 
