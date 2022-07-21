@@ -75,7 +75,7 @@ app.put("/videos/:id", (req, res) => {
     video.title = title;
     res.status(204).send(video);
   } else {
-    res.status(404).send(getErrorMessage("title"));
+    res.status(400).send(getErrorMessage("title"));
   }
 });
 
