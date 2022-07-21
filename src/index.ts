@@ -45,7 +45,7 @@ app.post("/videos", (req: Request, res: Response) => {
     const newVideo = {
       id: Number(new Date()),
       title: req.body.title,
-      author: req.body.author,
+      author: "it-incubator.eu",
     };
 
     videos.push(newVideo);
