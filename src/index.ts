@@ -22,7 +22,7 @@ const videos = [
 ];
 
 app.get("/", (req: Request, res: Response) => {
-  res.send(`App has started on ${port} port`);
+  res.send(`App has started on ${port} port!`);
 });
 
 app.get("/videos", (req: Request, res: Response) => {
@@ -88,5 +88,5 @@ app.put("/videos/:id", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Example app listening on port ${port}!`);
 });
