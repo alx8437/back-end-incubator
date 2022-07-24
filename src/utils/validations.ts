@@ -2,7 +2,7 @@ export const lengthEmptyValidation = (
   field: string | null,
   maxLength: number
 ): boolean => {
-  if (!field) {
+  if (!field?.trim()) {
     return false;
   }
 
