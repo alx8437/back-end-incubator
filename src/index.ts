@@ -1,7 +1,11 @@
-import express, { Response, Request } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import { titleValidation } from "./utils/validations";
+import {
+  isNumberValidation,
+  lengthEmptyValidation,
+  youtubeUrlValidator,
+} from "./utils/validations";
 import { getErrorMessage } from "./utils/errors";
 
 const app = express();
@@ -13,77 +17,232 @@ app.use(bodyParserMiddleware);
 
 const port = process.env.PORT || 5000;
 
-const videos = [
-  { id: 1, title: "About JS - 01", author: "it-incubator.eu" },
-  { id: 2, title: "About JS - 02", author: "it-incubator.eu" },
-  { id: 3, title: "About JS - 03", author: "it-incubator.eu" },
-  { id: 4, title: "About JS - 04", author: "it-incubator.eu" },
-  { id: 5, title: "About JS - 05", author: "it-incubator.eu" },
+const bloggers = [
+  {
+    id: 0,
+    name: "string",
+    youtubeUrl: "string",
+  },
+  {
+    id: 1,
+    name: "string",
+    youtubeUrl: "string",
+  },
+  {
+    id: 2,
+    name: "string",
+    youtubeUrl: "string",
+  },
+  {
+    id: 3,
+    name: "string",
+    youtubeUrl: "string",
+  },
+];
+const posts = [
+  {
+    id: 0,
+    title: "string",
+    shortDescription: "string",
+    content: "string",
+    bloggerId: 0,
+    bloggerName: "string",
+  },
+  {
+    id: 1,
+    title: "string",
+    shortDescription: "string",
+    content: "string",
+    bloggerId: 0,
+    bloggerName: "string",
+  },
+  {
+    id: 2,
+    title: "string",
+    shortDescription: "string",
+    content: "string",
+    bloggerId: 0,
+    bloggerName: "string",
+  },
 ];
 
 app.get("/", (req: Request, res: Response) => {
-  res.send(`App has started on ${port} port!`);
+  res.send(`App has started on ${port} port`);
 });
 
-app.get("/videos", (req: Request, res: Response) => {
-  res.send(videos);
+// Bloggers
+app.get("/bloggers", (req: Request, res: Response) => {
+  res.send(bloggers);
 });
 
-app.get("/videos/:id", (req: Request, res: Response) => {
-  const video = videos.find((video) => video.id === Number(req.params.id));
+app.post("/bloggers", (req: Request, res: Response) => {
+  const isName = lengthEmptyValidation(req.body.name, 15);
+  const isYoutubeUrl = youtubeUrlValidator(req.body.youtubeUrl);
 
-  if (video) {
-    res.send(video);
+  if (isName && isYoutubeUrl) {
+    const newBlogger = {
+      id: Number(new Date()),
+      name: req.body.name,
+      youtubeUrl: req.body.youtubeUrl,
+    };
+
+    bloggers.push(newBlogger);
+    res.status(201).send(newBlogger);
+  } else {
+    const errorFields: string[] = [];
+    !isName && errorFields.push("name");
+    !isYoutubeUrl && errorFields.push("youtubeUrl");
+    const errors = getErrorMessage(errorFields);
+    res.status(400).send(errors);
+  }
+});
+
+app.get("/bloggers/:id", (req: Request, res: Response) => {
+  const blogger = bloggers.find(
+    (blogger) => blogger.id === Number(req.params.id)
+  );
+
+  if (blogger) {
+    res.status(200).send(blogger);
   } else {
     res.send(404);
   }
 });
 
-app.post("/videos", (req: Request, res: Response) => {
-  const { title } = req.body;
+app.put("/bloggers/:id", (req: Request, res: Response) => {
+  const blogger = bloggers.find(
+    (blogger) => blogger.id === Number(req.params.id)
+  );
 
-  if (titleValidation(title)) {
-    const newVideo = {
-      id: Number(new Date()),
-      title: req.body.title,
-      author: "it-incubator.eu",
-    };
+  if (!blogger) {
+    res.send(404);
+    return;
+  }
 
-    videos.push(newVideo);
-    res.status(201).send(newVideo);
+  const isName = lengthEmptyValidation(req.body.name, 15);
+  const isYoutubeUrl = youtubeUrlValidator(req.body.youtubeUrl);
+
+  if (isName && isYoutubeUrl) {
+    blogger.name = req.body.name;
+    blogger.youtubeUrl = req.body.youtubeUrl;
+    res.send(204);
   } else {
-    res.status(400).send(getErrorMessage("title"));
+    const errorFields: string[] = [];
+    !isName && errorFields.push("name");
+    !isYoutubeUrl && errorFields.push("youtubeUrl");
+    const errors = getErrorMessage(errorFields);
+    res.status(400).send(errors);
   }
 });
 
-app.delete("/videos/:id", (req: Request, res: Response) => {
-  const index = videos.findIndex((video) => video.id === Number(req.params.id));
+app.delete("/bloggers/:id", (req, res) => {
+  const index = bloggers.findIndex(
+    (blogger) => blogger.id === Number(req.params.id)
+  );
+
+  if (index === -1) {
+    res.send(404);
+    return;
+  }
+
+  bloggers.splice(index, 1);
+  res.send(204);
+});
+
+// Posts
+app.get("/posts", (req: Request, res: Response) => {
+  res.send(posts);
+});
+
+app.post("/posts", (req: Request, res: Response) => {
+  const isTitle = lengthEmptyValidation(req.body.title, 30);
+  const isBloggerId = isNumberValidation(req.body.bloggerId);
+  const isShortDescription = lengthEmptyValidation(
+    req.body.shortDescription,
+    100
+  );
+  const isContent = lengthEmptyValidation(req.body.content, 1000);
+  const blogger = bloggers.find((blogger) => blogger.id === req.body.bloggerId);
+
+  if (isTitle && isBloggerId && isShortDescription && isContent && blogger) {
+    const newPost = {
+      id: Number(new Date()),
+      title: req.body.title,
+      shortDescription: req.body.shortDescription,
+      content: req.body.content,
+      bloggerId: req.body.bloggerId,
+      bloggerName: blogger.name,
+    };
+    res.status(201).send(newPost);
+  }
+
+  const errorFields: string[] = [];
+  !isTitle && errorFields.push("title");
+  !isBloggerId && errorFields.push("bloggerId");
+  !isContent && errorFields.push("content");
+  !isShortDescription && errorFields.push("shortDescription");
+
+  const errors = getErrorMessage(errorFields);
+
+  res.status(400).send(errors);
+});
+
+app.put("/posts/:id", (req: Request, res: Response) => {
+  const isTitle = lengthEmptyValidation(req.body.title, 30);
+  const isBloggerId = isNumberValidation(req.body.bloggerId);
+  const isShortDescription = lengthEmptyValidation(
+    req.body.shortDescription,
+    100
+  );
+  const isContent = lengthEmptyValidation(req.body.content, 1000);
+  const blogger = bloggers.find((blogger) => blogger.id === req.body.bloggerId);
+
+  if (isTitle && isBloggerId && isShortDescription && isContent && blogger) {
+    for (let i = 0; i < posts.length; i += 1) {
+      if (posts[i].id === Number(req.params.id)) {
+        posts[i] = {
+          ...posts[i],
+          title: req.body.title,
+          bloggerId: req.body.bloggerId,
+          shortDescription: req.body.shortDescription,
+          content: req.body.content,
+        };
+      }
+    }
+
+    res.send(204);
+  } else {
+    const errorFields: string[] = [];
+    !isTitle && errorFields.push("title");
+    !isBloggerId && errorFields.push("bloggerId");
+    !isContent && errorFields.push("content");
+    !isShortDescription && errorFields.push("shortDescription");
+
+    const errors = getErrorMessage(errorFields);
+
+    res.status(400).send(errors);
+    res.status(400).send(errors);
+  }
+});
+
+app.get("/posts/:id", (req: Request, res: Response) => {
+  const post = posts.find((post) => post.id === Number(req.params.id));
+
+  if (post) {
+    res.send(post);
+  } else {
+    res.send(404);
+  }
+});
+
+app.delete("/posts/:id", (req: Request, res: Response) => {
+  const index = posts.findIndex((post) => post.id === Number(req.params.id));
 
   if (index > -1) {
-    videos.splice(index, 1);
+    posts.splice(index, 1);
     res.send(204);
   } else {
     res.send(404);
-  }
-});
-
-app.put("/videos/:id", (req, res) => {
-  if (!req.params.id) {
-    res.send(404);
-  }
-
-  const { title } = req.body;
-  const video = videos.find((video) => video.id === Number(req.params.id));
-
-  if (!video) {
-    res.send(404);
-  }
-
-  if (titleValidation(title) && video) {
-    video.title = title;
-    res.status(204).send(video);
-  } else {
-    res.status(400).send(getErrorMessage("title"));
   }
 });
 
