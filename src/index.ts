@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import {
-  isNumberValidation,
   lengthEmptyValidation,
   youtubeUrlValidator,
 } from "./utils/validations";
@@ -155,8 +154,12 @@ app.get("/posts", (req: Request, res: Response) => {
 });
 
 app.post("/posts", (req: Request, res: Response) => {
+  const currentBlogger = bloggers.find(
+    (blogger) => blogger.id === req.body.bloggerId
+  );
+
   const isTitle = lengthEmptyValidation(req.body.title, 30);
-  const isBloggerId = isNumberValidation(req.body.bloggerId);
+  const isBloggerId = !!req.body.bloggerId && currentBlogger;
   const isShortDescription = lengthEmptyValidation(
     req.body.shortDescription,
     100
@@ -190,6 +193,9 @@ app.post("/posts", (req: Request, res: Response) => {
 
 app.put("/posts/:id", (req: Request, res: Response) => {
   const currentPost = posts.find((post) => post.id === Number(req.params.id));
+  const currentBlogger = bloggers.find(
+    (blogger) => blogger.id === req.body.bloggerId
+  );
 
   if (!currentPost) {
     res.send(404);
@@ -197,7 +203,7 @@ app.put("/posts/:id", (req: Request, res: Response) => {
   }
 
   const isTitle = lengthEmptyValidation(req.body.title, 30);
-  const isBloggerId = isNumberValidation(req.body.bloggerId);
+  const isBloggerId = !!req.body.bloggerId && currentBlogger;
   const isShortDescription = lengthEmptyValidation(
     req.body.shortDescription,
     100

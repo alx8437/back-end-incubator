@@ -9,9 +9,9 @@ export const lengthEmptyValidation = (
   return !!(field.length && field.length < maxLength);
 };
 
-export const isNumberValidation = (num: Number) => {
-  return typeof num === "number";
-};
+// export const isNumberValidation = (num: Number) => {
+//   return typeof num === "number";
+// };
 
 export const youtubeUrlValidator = (link: string | null): boolean => {
   if (!link) {
