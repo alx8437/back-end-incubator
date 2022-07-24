@@ -173,6 +173,7 @@ app.post("/posts", (req: Request, res: Response) => {
       bloggerId: req.body.bloggerId,
       bloggerName: blogger.name,
     };
+    posts.push(newPost);
     res.status(201).send(newPost);
   }
 
