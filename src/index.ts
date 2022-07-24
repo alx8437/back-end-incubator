@@ -189,6 +189,10 @@ app.post("/posts", (req: Request, res: Response) => {
 });
 
 app.put("/posts/:id", (req: Request, res: Response) => {
+  if (!req.params.id) {
+    res.send(404);
+    return;
+  }
   const isTitle = lengthEmptyValidation(req.body.title, 30);
   const isBloggerId = isNumberValidation(req.body.bloggerId);
   const isShortDescription = lengthEmptyValidation(
@@ -227,6 +231,10 @@ app.put("/posts/:id", (req: Request, res: Response) => {
 });
 
 app.get("/posts/:id", (req: Request, res: Response) => {
+  if (!req.params.id) {
+    res.send(404);
+    return;
+  }
   const post = posts.find((post) => post.id === Number(req.params.id));
 
   if (post) {
@@ -237,6 +245,10 @@ app.get("/posts/:id", (req: Request, res: Response) => {
 });
 
 app.delete("/posts/:id", (req: Request, res: Response) => {
+  if (!req.params.id) {
+    res.send(404);
+    return;
+  }
   const index = posts.findIndex((post) => post.id === Number(req.params.id));
 
   if (index > -1) {
