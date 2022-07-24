@@ -193,6 +193,8 @@ app.put("/posts/:id", (req: Request, res: Response) => {
     res.send(404);
     return;
   }
+
+  const currentPost = posts.find(post => post.id === Number(req.params.id))
   const isTitle = lengthEmptyValidation(req.body.title, 30);
   const isBloggerId = isNumberValidation(req.body.bloggerId);
   const isShortDescription = lengthEmptyValidation(
@@ -202,18 +204,23 @@ app.put("/posts/:id", (req: Request, res: Response) => {
   const isContent = lengthEmptyValidation(req.body.content, 1000);
   const blogger = bloggers.find((blogger) => blogger.id === req.body.bloggerId);
 
-  if (isTitle && isBloggerId && isShortDescription && isContent && blogger) {
-    for (let i = 0; i < posts.length; i += 1) {
-      if (posts[i].id === Number(req.params.id)) {
-        posts[i] = {
-          ...posts[i],
-          title: req.body.title,
-          bloggerId: req.body.bloggerId,
-          shortDescription: req.body.shortDescription,
-          content: req.body.content,
-        };
-      }
-    }
+  if (isTitle && isBloggerId && isShortDescription && isContent && blogger && currentPost) {
+    currentPost.id = req.body.title;
+    currentPost.bloggerId = req.body.bloggerId;
+    currentPost.shortDescription = req.body.shortDescription;
+    currentPost.content = req.body.content;
+
+    // for (let i = 0; i < posts.length; i += 1) {
+    //   if (posts[i].id === Number(req.params.id)) {
+    //     posts[i] = {
+    //       ...posts[i],
+    //       title: req.body.title,
+    //       bloggerId: req.body.bloggerId,
+    //       shortDescription: req.body.shortDescription,
+    //       content: req.body.content,
+    //     };
+    //   }
+    // }
 
     res.send(204);
   } else {
@@ -224,8 +231,6 @@ app.put("/posts/:id", (req: Request, res: Response) => {
     !isShortDescription && errorFields.push("shortDescription");
 
     const errors = getErrorMessage(errorFields);
-
-    res.status(400).send(errors);
     res.status(400).send(errors);
   }
 });
