@@ -1,4 +1,13 @@
-export const posts = [
+export type Post = {
+  id: number;
+  title: string;
+  shortDescription: string;
+  content: string;
+  bloggerId: number;
+  bloggerName: string;
+};
+
+export const posts: Array<Post> = [
   {
     id: 0,
     title: "string",

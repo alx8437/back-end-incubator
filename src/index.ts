@@ -13,6 +13,10 @@ app.use(bodyParserMiddleware);
 
 const port = process.env.PORT || 5000;
 
+app.get("/", (req: Request, res: Response) => {
+  res.send(`Example app listening on port ${port}!`);
+});
+
 // Routers
 app.use("/posts", postsRouter);
 app.use("/bloggers", bloggersRouter);

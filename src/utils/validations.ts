@@ -9,10 +9,6 @@ export const lengthEmptyValidation = (
   return !!(field.length && field.length < maxLength);
 };
 
-// export const isNumberValidation = (num: Number) => {
-//   return typeof num === "number";
-// };
-
 export const youtubeUrlValidator = (link: string | null): boolean => {
   if (!link) {
     return false;
@@ -25,5 +21,16 @@ export const youtubeUrlValidator = (link: string | null): boolean => {
 
   const isUrl = regexp.test(link);
 
-  return isUrl && !!(link.length < maxLength);
+  return isUrl && (link.length < maxLength);
+};
+
+export const bloggersFieldsValidation = (
+  isName: boolean,
+  isYoutubeUrl: boolean
+): string[] => {
+  const errorFields: string[] = [];
+  !isName && errorFields.push("name");
+  !isYoutubeUrl && errorFields.push("youtubeUrl");
+
+  return errorFields;
 };

@@ -1,4 +1,10 @@
-export const bloggers = [
+export type Blogger = {
+  id: number;
+  name: string;
+  youtubeUrl: string;
+};
+
+export const bloggers: Array<Blogger> = [
   {
     id: 0,
     name: "string",
