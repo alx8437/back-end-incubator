@@ -1,8 +1,5 @@
 import { bloggers, posts } from "../data";
-import { Blogger } from "../data/bloggers";
-import { lengthEmptyValidation } from "../utils/validations";
 import { Post } from "../data/posts";
-import { getErrorMessage, TError } from "../utils/errors";
 
 export const getPosts = () => {
   return posts;
@@ -12,16 +9,18 @@ export const createPost = (
   title: string,
   bloggerId: number,
   shortDescription: string,
-  content: string,
-  currentBlogger: Blogger
+  content: string
 ): Post => {
+  const currentBlogger = bloggers.find((blogger) => blogger.id === bloggerId);
+
   const newPost: Post = {
     id: Number(new Date()),
-    title: title,
-    shortDescription: shortDescription,
-    content: content,
-    bloggerId: bloggerId,
-    bloggerName: currentBlogger.name,
+    title,
+    shortDescription,
+    content,
+    bloggerId,
+    // this value has validated middleware isCorrectBloggerIdMiddleware()
+    bloggerName: currentBlogger!.name,
   };
   posts.push(newPost);
   return newPost;
@@ -35,46 +34,27 @@ export const updatePost = (
     bloggerId: number;
     shortDescription: string;
   }
-): "true" | "false" | TError => {
+): boolean => {
   const { content, bloggerId, title, shortDescription } = body;
 
   const currentPost = posts.find((post) => post.id === Number(id));
-  const currentBlogger = bloggers.find((blogger) => blogger.id === bloggerId);
 
   if (!currentPost) {
-    return "false";
+    return false;
   }
 
-  const isPutTitle = lengthEmptyValidation(title, 30);
-  const isBloggerId = !!bloggerId && currentBlogger;
-  const isShortDescription = lengthEmptyValidation(shortDescription, 100);
-  const isContent = lengthEmptyValidation(content, 1000);
-  const blogger = bloggers.find((blogger) => blogger.id === bloggerId);
-
-  if (isPutTitle && isBloggerId && isShortDescription && isContent && blogger) {
-    for (let i = 0; i < posts.length; i += 1) {
-      if (posts[i].id === Number(id)) {
-        posts[i] = {
-          ...posts[i],
-          title: title,
-          bloggerId,
-          shortDescription,
-          content,
-        };
-      }
+  for (let i = 0; i < posts.length; i += 1) {
+    if (posts[i].id === Number(id)) {
+      posts[i] = {
+        ...posts[i],
+        title: title,
+        bloggerId,
+        shortDescription,
+        content,
+      };
     }
-
-    return "true";
-  } else {
-    const errorFields: string[] = [];
-    !isPutTitle && errorFields.push("title");
-    !isBloggerId && errorFields.push("bloggerId");
-    !isContent && errorFields.push("content");
-    !isShortDescription && errorFields.push("shortDescription");
-
-    const error: TError = getErrorMessage(errorFields);
-    return error;
   }
+  return true;
 };
 
 export const getPostById = (id: number) => {

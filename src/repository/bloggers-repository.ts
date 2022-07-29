@@ -22,7 +22,11 @@ export const getBloggerById = (id: number) => {
   return blogger ? blogger : undefined;
 };
 
-export const updateBlogger = (id: number, name: string, youtubeUrl: string) => {
+export const updateBlogger = (
+  id: number,
+  name: string,
+  youtubeUrl: string
+): boolean => {
   const blogger = bloggers.find((blogger) => blogger.id === id);
 
   if (!blogger) {
