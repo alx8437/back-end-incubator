@@ -13,7 +13,7 @@ import {
   isCorrectBloggerIdMiddleware,
   shortDescriptionValidateMiddleware,
   titleValidateMiddleware,
-} from "../middlewares";
+} from "../utils/middlewares";
 
 export const postsRouter = Router({});
 

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { body, Result, validationResult } from "express-validator";
-import { getErrorMessage, TError } from "./utils/errors";
-import { bloggers } from "./data";
+import { getErrorMessage, TError } from "./errors";
+import { bloggers } from "../data";
 
 export const errorMiddleWare = (
   req: Request,

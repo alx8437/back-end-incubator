@@ -11,7 +11,7 @@ import {
   bloggerNameValidateMiddleware,
   errorMiddleWare,
   youtubeUrlValidateMiddleware,
-} from "../middlewares";
+} from "../utils/middlewares";
 
 export const bloggersRouter = Router({});
 
