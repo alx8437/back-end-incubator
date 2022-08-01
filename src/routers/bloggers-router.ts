@@ -12,11 +12,12 @@ import {
   errorMiddleWare,
   youtubeUrlValidateMiddleware,
 } from "../utils/middlewares";
+import { Blogger } from "../data/bloggers";
 
 export const bloggersRouter = Router({});
 
 bloggersRouter.get("/", (req: Request, res: Response) => {
-  const bloggers = getAllBloggers();
+  const bloggers: Blogger[] = getAllBloggers();
   res.send(bloggers);
 });
 
@@ -26,14 +27,19 @@ bloggersRouter.post(
   youtubeUrlValidateMiddleware,
   // should be last
   errorMiddleWare,
-  (req: Request, res: Response) => {
-    const blogger = createBlogger(req.body.name, req.body.youtubeUrl);
+  async (req: Request, res: Response) => {
+    const blogger: Blogger = await createBlogger(
+      req.body.name,
+      req.body.youtubeUrl
+    );
     res.status(201).send(blogger);
   }
 );
 
-bloggersRouter.get("/:id", (req: Request, res: Response) => {
-  const blogger = getBloggerById(Number(req.params.id));
+bloggersRouter.get("/:id", async (req: Request, res: Response) => {
+  const blogger: Blogger | undefined = await getBloggerById(
+    Number(req.params.id)
+  );
   if (blogger) {
     res.status(200).send(blogger);
   } else {
@@ -46,8 +52,8 @@ bloggersRouter.put(
   bloggerNameValidateMiddleware,
   youtubeUrlValidateMiddleware,
   errorMiddleWare,
-  (req: Request, res: Response) => {
-    const isUpdate: boolean = updateBlogger(
+  async (req: Request, res: Response) => {
+    const isUpdate: boolean = await updateBlogger(
       Number(req.params.id),
       req.body.name,
       req.body.youtubeUrl
@@ -61,8 +67,8 @@ bloggersRouter.put(
   }
 );
 
-bloggersRouter.delete("/:id", (req, res) => {
-  const isDeleted = deleteBlogger(Number(req.params.id));
+bloggersRouter.delete("/:id", async (req, res) => {
+  const isDeleted: boolean = await deleteBlogger(Number(req.params.id));
   if (isDeleted) {
     res.send(204);
   } else {

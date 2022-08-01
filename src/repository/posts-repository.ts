@@ -5,12 +5,12 @@ export const getPosts = () => {
   return posts;
 };
 
-export const createPost = (
+export const createPost = async (
   title: string,
   bloggerId: number,
   shortDescription: string,
   content: string
-): Post => {
+): Promise<Post> => {
   const currentBlogger = bloggers.find((blogger) => blogger.id === bloggerId);
 
   const newPost: Post = {
@@ -26,7 +26,7 @@ export const createPost = (
   return newPost;
 };
 
-export const updatePost = (
+export const updatePost = async (
   id: number,
   body: {
     content: string;
@@ -34,10 +34,10 @@ export const updatePost = (
     bloggerId: number;
     shortDescription: string;
   }
-): boolean => {
+): Promise<boolean> => {
   const { content, bloggerId, title, shortDescription } = body;
 
-  const currentPost = posts.find((post) => post.id === Number(id));
+  const currentPost = await posts.find((post) => post.id === Number(id));
 
   if (!currentPost) {
     return false;
@@ -57,14 +57,16 @@ export const updatePost = (
   return true;
 };
 
-export const getPostById = (id: number) => {
+export const getPostById = async (
+  id: number
+): Promise<Promise<Post> | undefined> => {
   const post: Post | undefined = posts.find((post) => post.id === id);
 
   return post;
 };
 
-export const deletePostById = (id: number): boolean => {
-  const index = posts.findIndex((post) => post.id === id);
+export const deletePostById = async (id: number): Promise<boolean> => {
+  const index = await posts.findIndex((post) => post.id === id);
 
   if (index > -1) {
     posts.splice(index, 1);

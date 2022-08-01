@@ -30,9 +30,14 @@ postsRouter.post(
   isCorrectBloggerIdMiddleware,
   // should be last
   errorMiddleWare,
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     const { title, bloggerId, shortDescription, content } = req.body;
-    const newPost = createPost(title, bloggerId, shortDescription, content);
+    const newPost: Post = await createPost(
+      title,
+      bloggerId,
+      shortDescription,
+      content
+    );
 
     res.status(201).send(newPost);
   }
@@ -46,8 +51,11 @@ postsRouter.put(
   isCorrectBloggerIdMiddleware,
   // should be last
   errorMiddleWare,
-  (req: Request, res: Response) => {
-    const isUpdated: boolean = updatePost(Number(req.params.id), req.body);
+  async (req: Request, res: Response) => {
+    const isUpdated: boolean = await updatePost(
+      Number(req.params.id),
+      req.body
+    );
 
     if (isUpdated) {
       res.send(204);
@@ -57,8 +65,8 @@ postsRouter.put(
   }
 );
 
-postsRouter.get("/:id", (req: Request, res: Response) => {
-  const postById: Post | undefined = getPostById(Number(req.params.id));
+postsRouter.get("/:id", async (req: Request, res: Response) => {
+  const postById: Post | undefined = await getPostById(Number(req.params.id));
 
   if (postById) {
     res.send(postById);
@@ -67,8 +75,8 @@ postsRouter.get("/:id", (req: Request, res: Response) => {
   }
 });
 
-postsRouter.delete("/:id", (req: Request, res: Response) => {
-  const isDeleted: boolean = deletePostById(Number(req.params.id));
+postsRouter.delete("/:id", async (req: Request, res: Response) => {
+  const isDeleted: boolean = await deletePostById(Number(req.params.id));
 
   if (isDeleted) {
     res.send(204);

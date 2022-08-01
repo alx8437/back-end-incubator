@@ -1,13 +1,17 @@
 import { bloggers } from "../data";
+import { Blogger } from "../data/bloggers";
 
-export const createBlogger = (name: string, youtubeUrl: string) => {
+export const createBlogger = async (
+  name: string,
+  youtubeUrl: string
+): Promise<Blogger> => {
   const newBlogger = {
     id: Number(new Date()),
     name,
     youtubeUrl,
   };
 
-  bloggers.push(newBlogger);
+  await bloggers.push(newBlogger);
 
   return newBlogger;
 };
@@ -16,18 +20,20 @@ export const getAllBloggers = () => {
   return bloggers;
 };
 
-export const getBloggerById = (id: number) => {
-  const blogger = bloggers.find((blogger) => blogger.id === id);
+export const getBloggerById = async (
+  id: number
+): Promise<Promise<Blogger> | undefined> => {
+  const blogger = await bloggers.find((blogger) => blogger.id === id);
 
   return blogger ? blogger : undefined;
 };
 
-export const updateBlogger = (
+export const updateBlogger = async (
   id: number,
   name: string,
   youtubeUrl: string
-): boolean => {
-  const blogger = bloggers.find((blogger) => blogger.id === id);
+): Promise<boolean> => {
+  const blogger = await bloggers.find((blogger) => blogger.id === id);
 
   if (!blogger) {
     return false;
@@ -38,8 +44,8 @@ export const updateBlogger = (
   }
 };
 
-export const deleteBlogger = (id: number): boolean => {
-  const index = bloggers.findIndex((blogger) => blogger.id === id);
+export const deleteBlogger = async (id: number): Promise<boolean> => {
+  const index = await bloggers.findIndex((blogger) => blogger.id === id);
   if (index > -1) {
     bloggers.splice(index, 1);
     return true;
