@@ -1,27 +1,28 @@
 {
-  "name": "1-lesson",
-  "version": "1.0.0",
-  "main": "src/index.ts",
-  "license": "MIT",
-  "dependencies": {
-    "body-parser": "^1.20.0",
-    "cors": "^2.8.5",
-    "express": "^4.18.1",
-    "express-validator": "^6.14.2"
-  },
-  "scripts": {
-    "watch": "tsc -w",
-    "dev": "yarn nodemon --inspect dist/index.js",
-    "build": "tsc",
-    "start": "node dist/index.js"
-  },
-  "devDependencies": {
-    "@types/cors": "^2.8.12",
-    "@types/express": "^4.17.13",
-    "@types/node": "^18.0.3",
-    "nodemon": "^2.0.19",
-    "prettier": "2.7.1",
-    "ts-node": "^10.8.2",
-    "typescript": "^4.7.4"
-  }
+    "name": "1-lesson",
+    "version": "1.0.0",
+    "main": "src/index.ts",
+    "license": "MIT",
+    "dependencies": {
+        "body-parser": "^1.20.0",
+        "cors": "^2.8.5",
+        "express": "^4.18.1",
+        "express-validator": "^6.14.2",
+        "mongodb": "^4.8.1"
+    },
+    "scripts": {
+        "watch": "tsc -w",
+        "dev": "yarn nodemon --inspect dist/index.js",
+        "build": "tsc",
+        "start": "node dist/index.js"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.12",
+        "@types/express": "^4.17.13",
+        "@types/node": "^18.0.3",
+        "nodemon": "^2.0.19",
+        "prettier": "2.7.1",
+        "ts-node": "^10.8.2",
+        "typescript": "^4.7.4"
+    }
 }
