@@ -3,7 +3,7 @@ import { body, Result, validationResult } from 'express-validator';
 import { getErrorMessage, TError } from './errors';
 import { bloggersCollection } from '../repositories/db';
 import { WithId } from 'mongodb';
-import { Blogger } from '../repositories/bloggers-db-repository';
+import { Blogger } from '../repositories/bloggers-repository';
 
 export const errorMiddleWare = (
     req: Request,

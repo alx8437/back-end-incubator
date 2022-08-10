@@ -1,5 +1,5 @@
 import { bloggersCollection } from './db';
-import { DeleteResult, UpdateResult, WithId } from 'mongodb';
+import { DeleteResult, InsertOneResult, UpdateResult, WithId } from 'mongodb';
 
 export type Blogger = {
     id: number;
@@ -7,17 +7,13 @@ export type Blogger = {
     youtubeUrl: string;
 };
 
-export const bloggersDBRepository = {
-    async createBlogger(name: string, youtubeUrl: string): Promise<Blogger> {
-        const newBlogger = {
-            id: Number(new Date()),
-            name,
-            youtubeUrl,
-        };
+export const bloggersRepository = {
+    async createBlogger(blogger: Blogger): Promise<boolean> {
+        const result: InsertOneResult = await bloggersCollection.insertOne(
+            blogger,
+        );
 
-        await bloggersCollection.insertOne(newBlogger);
-
-        return newBlogger;
+        return result.acknowledged;
     },
 
     async getAllBloggers(): Promise<Blogger[]> {

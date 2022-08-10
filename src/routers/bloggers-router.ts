@@ -1,18 +1,19 @@
 import { Request, Response, Router } from 'express';
 import {
     Blogger,
-    bloggersDBRepository,
-} from '../repositories/bloggers-db-repository';
+    bloggersRepository,
+} from '../repositories/bloggers-repository';
 import {
     bloggerNameValidateMiddleware,
     errorMiddleWare,
     youtubeUrlValidateMiddleware,
 } from '../utils/middlewares';
+import { bloggersService } from '../services/bloggers-service';
 
 export const bloggersRouter = Router({});
 
 bloggersRouter.get('/', async (req: Request, res: Response) => {
-    const bloggers: Blogger[] = await bloggersDBRepository.getAllBloggers();
+    const bloggers: Blogger[] = await bloggersService.getAllBloggers();
     res.send(bloggers);
 });
 
@@ -23,16 +24,21 @@ bloggersRouter.post(
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {
-        const blogger: Blogger = await bloggersDBRepository.createBlogger(
+        const blogger: Blogger | null = await bloggersService.createBlogger(
             req.body.name,
             req.body.youtubeUrl,
         );
-        res.status(201).send(blogger);
+
+        if (blogger) {
+            res.status(201).send(blogger);
+        } else {
+            return res.status(500);
+        }
     },
 );
 
 bloggersRouter.get('/:id', async (req: Request, res: Response) => {
-    const blogger: Blogger | null = await bloggersDBRepository.getBloggerById(
+    const blogger: Blogger | null = await bloggersService.getBloggerById(
         Number(req.params.id),
     );
     if (blogger) {
@@ -48,7 +54,7 @@ bloggersRouter.put(
     youtubeUrlValidateMiddleware,
     errorMiddleWare,
     async (req: Request, res: Response) => {
-        const isUpdate: boolean = await bloggersDBRepository.updateBlogger(
+        const isUpdate: boolean = await bloggersRepository.updateBlogger(
             Number(req.params.id),
             req.body.name,
             req.body.youtubeUrl,
@@ -63,7 +69,7 @@ bloggersRouter.put(
 );
 
 bloggersRouter.delete('/:id', async (req, res) => {
-    const isDeleted: boolean = await bloggersDBRepository.deleteBlogger(
+    const isDeleted: boolean = await bloggersService.deleteBlogger(
         Number(req.params.id),
     );
     if (isDeleted) {

@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-import { Blogger } from './bloggers-db-repository';
+import { Blogger } from './bloggers-repository';
 import { Post } from '../routers/posts-router';
 
 const mongoURI =
