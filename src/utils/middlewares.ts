@@ -12,7 +12,9 @@ export const errorMiddleWare = (
 ) => {
     const errors: Result = validationResult(req);
 
-    const errorFields = errors.array().map((error) => error.param);
+    const errorFields = errors
+        .array({ onlyFirstError: true })
+        .map((error) => error.param);
     const errorMessage: TError = getErrorMessage(errorFields);
 
     if (!errors.isEmpty()) {
