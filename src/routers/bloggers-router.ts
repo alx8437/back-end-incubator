@@ -54,7 +54,7 @@ bloggersRouter.put(
     youtubeUrlValidateMiddleware,
     errorMiddleWare,
     async (req: Request, res: Response) => {
-        const isUpdate: boolean = await bloggersRepository.updateBlogger(
+        const isUpdate: boolean = await bloggersService.updateBlogger(
             Number(req.params.id),
             req.body.name,
             req.body.youtubeUrl,

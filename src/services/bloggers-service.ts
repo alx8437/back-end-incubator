@@ -38,9 +38,8 @@ export const bloggersService = {
         const blogger: Blogger | null = await bloggersRepository.getBloggerById(
             id,
         );
-        const bloggerWithoutBaseId = removeProperty(blogger, '_id') as Blogger;
 
-        return bloggerWithoutBaseId;
+        return blogger;
     },
 
     async updateBlogger(

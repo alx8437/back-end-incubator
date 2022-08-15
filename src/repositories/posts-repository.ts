@@ -4,7 +4,9 @@ import { Post } from '../routers/posts-router';
 
 export const postDBRepository = {
     async getPosts() {
-        const posts: Post[] = await postCollection.find().toArray();
+        const posts: Post[] = await postCollection
+            .find({}, { projection: { _id: 0 } })
+            .toArray();
 
         return posts;
     },
@@ -31,7 +33,10 @@ export const postDBRepository = {
     },
 
     async getPostById(id: number): Promise<Promise<Post> | null> {
-        const post: WithId<Post> | null = await postCollection.findOne({ id });
+        const post: WithId<Post> | null = await postCollection.findOne(
+            { id },
+            { projection: { _id: 0 } },
+        );
 
         return post;
     },

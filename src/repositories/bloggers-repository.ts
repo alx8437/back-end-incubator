@@ -18,7 +18,7 @@ export const bloggersRepository = {
 
     async getAllBloggers(): Promise<Blogger[]> {
         const bloggers: WithId<Blogger>[] = await bloggersCollection
-            .find()
+            .find({}, { projection: { _id: 0 } })
             .toArray();
 
         return bloggers;
@@ -26,7 +26,10 @@ export const bloggersRepository = {
 
     async getBloggerById(id: number): Promise<Promise<Blogger> | null> {
         const blogger: WithId<Blogger> | null =
-            await bloggersCollection.findOne({ id });
+            await bloggersCollection.findOne(
+                { id },
+                { projection: { _id: 0 } },
+            );
 
         return blogger;
     },

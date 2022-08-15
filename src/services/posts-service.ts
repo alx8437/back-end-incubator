@@ -58,9 +58,8 @@ export const postsService = {
 
     async getPostById(id: number): Promise<Promise<Post> | null> {
         const post: Post | null = await postDBRepository.getPostById(id);
-        const postWithoutBaseId = removeProperty(post, '_id') as Post;
 
-        return postWithoutBaseId;
+        return post;
     },
 
     async deletePostById(id: number): Promise<boolean> {
