@@ -1,6 +1,7 @@
 import { Post } from '../routers/posts-router';
 import { postDBRepository } from '../repositories/posts-repository';
 import { bloggersService } from './bloggers-service';
+import { removeProperty } from '../utils';
 
 export const postsService = {
     async getPosts() {
@@ -29,8 +30,9 @@ export const postsService = {
         };
 
         const isCreated: boolean = await postDBRepository.createPost(newPost);
+        const postWithoutBaseId = removeProperty(newPost, '_id') as Post;
 
-        return isCreated ? newPost : null;
+        return isCreated ? postWithoutBaseId : null;
     },
 
     async updatePost(
@@ -56,8 +58,9 @@ export const postsService = {
 
     async getPostById(id: number): Promise<Promise<Post> | null> {
         const post: Post | null = await postDBRepository.getPostById(id);
+        const postWithoutBaseId = removeProperty(post, '_id') as Post;
 
-        return post;
+        return postWithoutBaseId;
     },
 
     async deletePostById(id: number): Promise<boolean> {

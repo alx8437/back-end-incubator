@@ -1,4 +1,5 @@
 import { bloggersRepository } from '../repositories/bloggers-repository';
+import { removeProperty } from '../utils';
 
 export type Blogger = {
     id: number;
@@ -19,7 +20,12 @@ export const bloggersService = {
 
         const isCreated = await bloggersRepository.createBlogger(newBlogger);
 
-        return isCreated ? newBlogger : null;
+        const bloggerWithoutBaseId = removeProperty(
+            newBlogger,
+            '_id',
+        ) as Blogger;
+
+        return isCreated ? bloggerWithoutBaseId : null;
     },
 
     async getAllBloggers(): Promise<Blogger[]> {
@@ -32,8 +38,9 @@ export const bloggersService = {
         const blogger: Blogger | null = await bloggersRepository.getBloggerById(
             id,
         );
+        const bloggerWithoutBaseId = removeProperty(blogger, '_id') as Blogger;
 
-        return blogger;
+        return bloggerWithoutBaseId;
     },
 
     async updateBlogger(
