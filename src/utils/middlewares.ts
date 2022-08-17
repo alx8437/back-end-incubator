@@ -41,7 +41,11 @@ export const isCorrectBloggerIdMiddleware = body('bloggerId').custom(
     async (bloggerId) => {
         const currentBlogger: WithId<Blogger> | null =
             await bloggersCollection.findOne({ id: bloggerId });
-        if (currentBlogger) return true;
+        if (!currentBlogger) {
+            throw new Error('BloggerId is not found');
+        }
+
+        return true;
     },
 );
 
