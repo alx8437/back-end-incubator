@@ -7,6 +7,7 @@ import {
     titleValidateMiddleware,
 } from '../utils/middlewares';
 import { postsService } from '../services/posts-service';
+import { checkAuthorization } from '../utils/authorization';
 
 export type Post = {
     id: number;
@@ -33,6 +34,8 @@ postsRouter.post(
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {
+        checkAuthorization(res, req.headers);
+
         const { body } = req;
         const newPost: Post | null = await postsService.createPost(body);
         if (newPost) {
@@ -52,6 +55,8 @@ postsRouter.put(
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {
+        checkAuthorization(res, req.headers);
+
         const isUpdated: boolean = await postsService.updatePost(
             Number(req.params.id),
             req.body,
@@ -78,6 +83,8 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
 });
 
 postsRouter.delete('/:id', async (req: Request, res: Response) => {
+    checkAuthorization(res, req.headers);
+
     const isDeleted: boolean = await postsService.deletePostById(
         Number(req.params.id),
     );

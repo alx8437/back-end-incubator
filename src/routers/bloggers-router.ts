@@ -1,14 +1,12 @@
 import { Request, Response, Router } from 'express';
-import {
-    Blogger,
-    bloggersRepository,
-} from '../repositories/bloggers-repository';
+import { Blogger } from '../repositories/bloggers-repository';
 import {
     bloggerNameValidateMiddleware,
     errorMiddleWare,
     youtubeUrlValidateMiddleware,
 } from '../utils/middlewares';
 import { bloggersService } from '../services/bloggers-service';
+import { checkAuthorization } from '../utils/authorization';
 
 export const bloggersRouter = Router({});
 
@@ -24,6 +22,8 @@ bloggersRouter.post(
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {
+        checkAuthorization(res, req.headers);
+
         const blogger: Blogger | null = await bloggersService.createBlogger(
             req.body.name,
             req.body.youtubeUrl,
@@ -54,6 +54,8 @@ bloggersRouter.put(
     youtubeUrlValidateMiddleware,
     errorMiddleWare,
     async (req: Request, res: Response) => {
+        checkAuthorization(res, req.headers);
+
         const isUpdate: boolean = await bloggersService.updateBlogger(
             Number(req.params.id),
             req.body.name,
@@ -69,6 +71,8 @@ bloggersRouter.put(
 );
 
 bloggersRouter.delete('/:id', async (req, res) => {
+    checkAuthorization(res, req.headers);
+
     const isDeleted: boolean = await bloggersService.deleteBlogger(
         Number(req.params.id),
     );
