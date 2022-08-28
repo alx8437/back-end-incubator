@@ -4,6 +4,7 @@ import { getErrorMessage, TError } from './errors';
 import { bloggersCollection } from '../repositories/db';
 import { WithId } from 'mongodb';
 import { Blogger } from '../repositories/bloggers-repository';
+import { checkAuthorization } from './authorization';
 
 export const errorMiddleWare = (
     req: Request,
@@ -57,3 +58,19 @@ export const youtubeUrlValidateMiddleware = body('youtubeUrl')
     .trim()
     .isURL()
     .isLength({ max: 100 });
+
+export const authorizeMiddleware = (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    const { headers } = req;
+
+    const isAuthorize = checkAuthorization(headers);
+    if (!isAuthorize) {
+        res.send(401);
+        return;
+    }
+
+    next();
+};

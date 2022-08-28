@@ -1,12 +1,12 @@
 import { Request, Response, Router } from 'express';
 import { Blogger } from '../repositories/bloggers-repository';
 import {
+    authorizeMiddleware,
     bloggerNameValidateMiddleware,
     errorMiddleWare,
     youtubeUrlValidateMiddleware,
 } from '../utils/middlewares';
 import { bloggersService } from '../services/bloggers-service';
-import { checkAuthorization } from '../utils/authorization';
 
 export const bloggersRouter = Router({});
 
@@ -17,12 +17,12 @@ bloggersRouter.get('/', async (req: Request, res: Response) => {
 
 bloggersRouter.post(
     '/',
+    authorizeMiddleware,
     bloggerNameValidateMiddleware,
     youtubeUrlValidateMiddleware,
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {
-        checkAuthorization(res, req.headers);
 
         const blogger: Blogger | null = await bloggersService.createBlogger(
             req.body.name,
@@ -50,12 +50,11 @@ bloggersRouter.get('/:id', async (req: Request, res: Response) => {
 
 bloggersRouter.put(
     '/:id',
+    authorizeMiddleware,
     bloggerNameValidateMiddleware,
     youtubeUrlValidateMiddleware,
     errorMiddleWare,
     async (req: Request, res: Response) => {
-        checkAuthorization(res, req.headers);
-
         const isUpdate: boolean = await bloggersService.updateBlogger(
             Number(req.params.id),
             req.body.name,
@@ -70,9 +69,7 @@ bloggersRouter.put(
     },
 );
 
-bloggersRouter.delete('/:id', async (req, res) => {
-    checkAuthorization(res, req.headers);
-
+bloggersRouter.delete('/:id', authorizeMiddleware, async (req, res) => {
     const isDeleted: boolean = await bloggersService.deleteBlogger(
         Number(req.params.id),
     );

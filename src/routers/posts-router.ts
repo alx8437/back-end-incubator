@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import {
+    authorizeMiddleware,
     contentValidateMiddleware,
     errorMiddleWare,
     isCorrectBloggerIdMiddleware,
@@ -7,7 +8,6 @@ import {
     titleValidateMiddleware,
 } from '../utils/middlewares';
 import { postsService } from '../services/posts-service';
-import { checkAuthorization } from '../utils/authorization';
 
 export type Post = {
     id: number;
@@ -27,6 +27,7 @@ postsRouter.get('/', async (req: Request, res: Response) => {
 
 postsRouter.post(
     '/',
+    authorizeMiddleware,
     titleValidateMiddleware,
     shortDescriptionValidateMiddleware,
     contentValidateMiddleware,
@@ -34,8 +35,6 @@ postsRouter.post(
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {
-        checkAuthorization(res, req.headers);
-
         const { body } = req;
         const newPost: Post | null = await postsService.createPost(body);
         if (newPost) {
@@ -48,6 +47,7 @@ postsRouter.post(
 
 postsRouter.put(
     '/:id',
+    authorizeMiddleware,
     titleValidateMiddleware,
     shortDescriptionValidateMiddleware,
     contentValidateMiddleware,
@@ -55,9 +55,7 @@ postsRouter.put(
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {
-        checkAuthorization(res, req.headers);
-
-        const isUpdated: boolean = await postsService.updatePost(
+      const isUpdated: boolean = await postsService.updatePost(
             Number(req.params.id),
             req.body,
         );
@@ -82,16 +80,18 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
     }
 });
 
-postsRouter.delete('/:id', async (req: Request, res: Response) => {
-    checkAuthorization(res, req.headers);
+postsRouter.delete(
+    '/:id',
+    authorizeMiddleware,
+    async (req: Request, res: Response) => {
+        const isDeleted: boolean = await postsService.deletePostById(
+            Number(req.params.id),
+        );
 
-    const isDeleted: boolean = await postsService.deletePostById(
-        Number(req.params.id),
-    );
-
-    if (isDeleted) {
-        res.send(204);
-    } else {
-        res.send(404);
-    }
-});
+        if (isDeleted) {
+            res.send(204);
+        } else {
+            res.send(404);
+        }
+    },
+);
