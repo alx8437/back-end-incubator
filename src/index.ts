@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import { postsRouter } from './routers/posts-router';
 import { bloggersRouter } from './routers/bloggers-router';
 import { runDB } from './repositories/db';
+import { testingRouter } from './routers/testing-router';
 
 const app = express();
 const corsMiddleware = cors();
@@ -21,6 +22,7 @@ app.get('/', (req: Request, res: Response) => {
 // Routers
 app.use('/posts', postsRouter);
 app.use('/bloggers', bloggersRouter);
+app.use('/testing', testingRouter);
 
 const startApp = async () => {
     await runDB();
