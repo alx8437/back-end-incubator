@@ -21,7 +21,7 @@ app.get('/', (req: Request, res: Response) => {
 
 // Routers
 app.use('/posts', postsRouter);
-app.use('/bloggers', bloggersRouter);
+app.use('/blogs', bloggersRouter);
 app.use('/testing', testingRouter);
 
 const startApp = async () => {

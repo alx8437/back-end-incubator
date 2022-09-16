@@ -7,3 +7,5 @@ export const removeProperty = (object: any, property: string): Object => {
     }
     return object;
 };
+
+// pagination skip formula = (pageNumber - 1) * pageSize;
