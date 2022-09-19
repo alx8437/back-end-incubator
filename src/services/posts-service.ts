@@ -7,7 +7,7 @@ export type Post = {
     title: string;
     shortDescription: string;
     content: string;
-    bloggerId: number;
+    bloggerId: string;
     bloggerName: string;
     createdAt: string;
 };
@@ -21,7 +21,7 @@ export const postsService = {
 
     async createPost(body: {
         title: string;
-        bloggerId: number;
+        bloggerId: string;
         shortDescription: string;
         content: string;
     }): Promise<Post | null> {
@@ -46,11 +46,11 @@ export const postsService = {
     },
 
     async updatePost(
-        id: number,
+        id: string,
         body: {
             content: string;
             title: string;
-            bloggerId: number;
+            bloggerId: string;
             shortDescription: string;
         },
     ): Promise<boolean> {
@@ -66,13 +66,13 @@ export const postsService = {
         return result;
     },
 
-    async getPostById(id: number): Promise<Promise<Post> | null> {
+    async getPostById(id: string): Promise<Promise<Post> | null> {
         const post: Post | null = await postDBRepository.getPostById(id);
 
         return post;
     },
 
-    async deletePostById(id: number): Promise<boolean> {
+    async deletePostById(id: string): Promise<boolean> {
         const result: boolean = await postDBRepository.deletePostById(id);
 
         return result;

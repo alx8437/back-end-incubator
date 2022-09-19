@@ -18,10 +18,10 @@ export const postDBRepository = {
     },
 
     async updatePost(
-        id: number,
+        id: string,
         content: string,
         title: string,
-        bloggerId: number,
+        bloggerId: string,
         shortDescription: string,
     ): Promise<boolean> {
         const result: UpdateResult = await postCollection.updateOne(
@@ -32,7 +32,7 @@ export const postDBRepository = {
         return result.matchedCount === 1;
     },
 
-    async getPostById(id: number): Promise<Promise<Post> | null> {
+    async getPostById(id: string): Promise<Promise<Post> | null> {
         const post: WithId<Post> | null = await postCollection.findOne(
             { id },
             { projection: { _id: 0 } },
@@ -41,7 +41,7 @@ export const postDBRepository = {
         return post;
     },
 
-    async deletePostById(id: number): Promise<boolean> {
+    async deletePostById(id: string): Promise<boolean> {
         const result: DeleteResult = await postCollection.deleteOne({ id });
 
         return result.deletedCount === 1;

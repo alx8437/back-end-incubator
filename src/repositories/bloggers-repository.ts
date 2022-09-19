@@ -19,7 +19,7 @@ export const bloggersRepository = {
         return bloggers;
     },
 
-    async getBloggerById(id: number): Promise<Promise<Blogger> | null> {
+    async getBloggerById(id: string): Promise<Promise<Blogger> | null> {
         const blogger: WithId<Blogger> | null =
             await bloggersCollection.findOne(
                 { id },
@@ -30,7 +30,7 @@ export const bloggersRepository = {
     },
 
     async updateBlogger(
-        id: number,
+        id: string,
         name: string,
         youtubeUrl: string,
     ): Promise<boolean> {
@@ -42,7 +42,7 @@ export const bloggersRepository = {
         return result.matchedCount === 1;
     },
 
-    async deleteBlogger(id: number): Promise<boolean> {
+    async deleteBlogger(id: string): Promise<boolean> {
         const result: DeleteResult = await bloggersCollection.deleteOne({ id });
 
         return result.deletedCount === 1;

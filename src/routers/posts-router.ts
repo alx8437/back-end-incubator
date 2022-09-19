@@ -47,7 +47,7 @@ postsRouter.put(
     errorMiddleWare,
     async (req: Request, res: Response) => {
         const isUpdated: boolean = await postsService.updatePost(
-            Number(req.params.id),
+            req.params.id,
             req.body,
         );
 
@@ -60,9 +60,7 @@ postsRouter.put(
 );
 
 postsRouter.get('/:id', async (req: Request, res: Response) => {
-    const postById: Post | null = await postsService.getPostById(
-        Number(req.params.id),
-    );
+    const postById: Post | null = await postsService.getPostById(req.params.id);
 
     if (postById) {
         res.send(postById);
@@ -76,7 +74,7 @@ postsRouter.delete(
     authorizeMiddleware,
     async (req: Request, res: Response) => {
         const isDeleted: boolean = await postsService.deletePostById(
-            Number(req.params.id),
+            req.params.id,
         );
 
         if (isDeleted) {

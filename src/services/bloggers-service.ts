@@ -36,7 +36,7 @@ export const bloggersService = {
         return bloggers;
     },
 
-    async getBloggerById(id: number): Promise<Promise<Blogger> | null> {
+    async getBloggerById(id: string): Promise<Promise<Blogger> | null> {
         const blogger: Blogger | null = await bloggersRepository.getBloggerById(
             id,
         );
@@ -45,7 +45,7 @@ export const bloggersService = {
     },
 
     async updateBlogger(
-        id: number,
+        id: string,
         name: string,
         youtubeUrl: string,
     ): Promise<boolean> {
@@ -58,7 +58,7 @@ export const bloggersService = {
         return result;
     },
 
-    async deleteBlogger(id: number): Promise<boolean> {
+    async deleteBlogger(id: string): Promise<boolean> {
         const result: boolean = await bloggersRepository.deleteBlogger(id);
 
         return result;
