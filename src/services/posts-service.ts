@@ -3,7 +3,7 @@ import { bloggersService } from './bloggers-service';
 import { removeProperty } from '../utils';
 
 export type Post = {
-    id: number;
+    id: string;
     title: string;
     shortDescription: string;
     content: string;
@@ -29,7 +29,7 @@ export const postsService = {
         const currentBlogger = await bloggersService.getBloggerById(bloggerId);
 
         const newPost: Post = {
-            id: Number(new Date()),
+            id: new Date().toString(),
             title,
             shortDescription,
             content,

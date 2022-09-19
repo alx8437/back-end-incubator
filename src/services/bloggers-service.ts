@@ -2,7 +2,7 @@ import { bloggersRepository } from '../repositories/bloggers-repository';
 import { removeProperty } from '../utils';
 
 export type Blogger = {
-    id: number;
+    id: string;
     name: string;
     youtubeUrl: string;
     createdAt: string;
@@ -14,7 +14,7 @@ export const bloggersService = {
         youtubeUrl: string,
     ): Promise<Blogger | null> {
         const newBlogger: Blogger = {
-            id: Number(new Date()),
+            id: new Date().toString(),
             name,
             youtubeUrl,
             createdAt: new Date().toISOString(),
