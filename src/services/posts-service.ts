@@ -29,7 +29,7 @@ export const postsService = {
         const currentBlogger = await bloggersService.getBloggerById(bloggerId);
 
         const newPost: Post = {
-            id: new Date().toString(),
+            id: Number(new Date()).toString(),
             title,
             shortDescription,
             content,

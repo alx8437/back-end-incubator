@@ -14,7 +14,7 @@ export const bloggersService = {
         youtubeUrl: string,
     ): Promise<Blogger | null> {
         const newBlogger: Blogger = {
-            id: new Date().toString(),
+            id: Number(new Date()).toString(),
             name,
             youtubeUrl,
             createdAt: new Date().toISOString(),
