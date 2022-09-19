@@ -1,12 +1,11 @@
 import { Request, Response, Router } from 'express';
-import { Blogger } from '../repositories/bloggers-repository';
 import {
     authorizeMiddleware,
     bloggerNameValidateMiddleware,
     errorMiddleWare,
     youtubeUrlValidateMiddleware,
 } from '../utils/middlewares';
-import { bloggersService } from '../services/bloggers-service';
+import { Blogger, bloggersService } from '../services/bloggers-service';
 
 export const bloggersRouter = Router({});
 
@@ -23,7 +22,6 @@ bloggersRouter.post(
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {
-
         const blogger: Blogger | null = await bloggersService.createBlogger(
             req.body.name,
             req.body.youtubeUrl,

@@ -1,11 +1,6 @@
 import { bloggersCollection } from './db';
 import { DeleteResult, InsertOneResult, UpdateResult, WithId } from 'mongodb';
-
-export type Blogger = {
-    id: number;
-    name: string;
-    youtubeUrl: string;
-};
+import { Blogger } from '../services/bloggers-service';
 
 export const bloggersRepository = {
     async createBlogger(blogger: Blogger): Promise<boolean> {

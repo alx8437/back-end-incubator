@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
-import { Blogger } from './bloggers-repository';
-import { Post } from '../routers/posts-router';
+import { Blogger } from '../services/bloggers-service';
+import { Post } from '../services/posts-service';
 
 const mongoURI =
     process.env.mongoURI ||

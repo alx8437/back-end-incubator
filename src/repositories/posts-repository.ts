@@ -1,6 +1,6 @@
 import { DeleteResult, InsertOneResult, UpdateResult, WithId } from 'mongodb';
+import { Post } from '../services/posts-service';
 import { postCollection } from './db';
-import { Post } from '../routers/posts-router';
 
 export const postDBRepository = {
     async getPosts() {

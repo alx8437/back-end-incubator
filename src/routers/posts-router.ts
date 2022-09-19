@@ -7,16 +7,7 @@ import {
     shortDescriptionValidateMiddleware,
     titleValidateMiddleware,
 } from '../utils/middlewares';
-import { postsService } from '../services/posts-service';
-
-export type Post = {
-    id: number;
-    title: string;
-    shortDescription: string;
-    content: string;
-    bloggerId: number;
-    bloggerName: string;
-};
+import { Post, postsService } from '../services/posts-service';
 
 export const postsRouter = Router({});
 
@@ -55,7 +46,7 @@ postsRouter.put(
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {
-      const isUpdated: boolean = await postsService.updatePost(
+        const isUpdated: boolean = await postsService.updatePost(
             Number(req.params.id),
             req.body,
         );

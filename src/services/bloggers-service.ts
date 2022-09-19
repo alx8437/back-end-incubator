@@ -5,6 +5,7 @@ export type Blogger = {
     id: number;
     name: string;
     youtubeUrl: string;
+    createdAt: string;
 };
 
 export const bloggersService = {
@@ -12,10 +13,11 @@ export const bloggersService = {
         name: string,
         youtubeUrl: string,
     ): Promise<Blogger | null> {
-        const newBlogger = {
+        const newBlogger: Blogger = {
             id: Number(new Date()),
             name,
             youtubeUrl,
+            createdAt: new Date().toISOString(),
         };
 
         const isCreated = await bloggersRepository.createBlogger(newBlogger);

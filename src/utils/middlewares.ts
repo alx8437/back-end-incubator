@@ -3,8 +3,8 @@ import { body, Result, validationResult } from 'express-validator';
 import { getErrorMessage, TError } from './errors';
 import { bloggersCollection } from '../repositories/db';
 import { WithId } from 'mongodb';
-import { Blogger } from '../repositories/bloggers-repository';
 import { checkAuthorization } from './authorization';
+import { Blogger } from '../services/bloggers-service';
 
 export const errorMiddleWare = (
     req: Request,

@@ -1,7 +1,16 @@
-import { Post } from '../routers/posts-router';
 import { postDBRepository } from '../repositories/posts-repository';
 import { bloggersService } from './bloggers-service';
 import { removeProperty } from '../utils';
+
+export type Post = {
+    id: number;
+    title: string;
+    shortDescription: string;
+    content: string;
+    bloggerId: number;
+    bloggerName: string;
+    createdAt: string;
+};
 
 export const postsService = {
     async getPosts() {
@@ -27,6 +36,7 @@ export const postsService = {
             bloggerId,
             // this value has validated middleware isCorrectBloggerIdMiddleware()
             bloggerName: currentBlogger!.name,
+            createdAt: new Date().toISOString(),
         };
 
         const isCreated: boolean = await postDBRepository.createPost(newPost);
