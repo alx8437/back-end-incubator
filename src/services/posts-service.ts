@@ -1,5 +1,5 @@
 import { postDBRepository } from '../repositories/posts-repository';
-import { bloggersService } from './bloggers-service';
+import { blogsService } from './blogs-service';
 import { removeProperty } from '../utils';
 
 export type Post = {
@@ -8,7 +8,7 @@ export type Post = {
     shortDescription: string;
     content: string;
     blogId: string;
-    bloggerName: string;
+    blogName: string;
     createdAt: string;
 };
 
@@ -26,7 +26,7 @@ export const postsService = {
         content: string;
     }): Promise<Post | null> {
         const { title, blogId, shortDescription, content } = body;
-        const currentBlogger = await bloggersService.getBloggerById(blogId);
+        const currentBlogger = await blogsService.getBloggerById(blogId);
 
         const newPost: Post = {
             id: Number(new Date()).toString(),
@@ -35,7 +35,7 @@ export const postsService = {
             content,
             blogId,
             // this value has validated middleware isCorrectBloggerIdMiddleware()
-            bloggerName: currentBlogger!.name,
+            blogName: currentBlogger!.name,
             createdAt: new Date().toISOString(),
         };
 

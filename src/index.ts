@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import { postsRouter } from './routers/posts-router';
-import { bloggersRouter } from './routers/bloggers-router';
+import { blogsRouter } from './routers/blogs-router';
 import { runDB } from './repositories/db';
 import { testingRouter } from './routers/testing-router';
 
@@ -21,7 +21,7 @@ app.get('/', (req: Request, res: Response) => {
 
 // Routers
 app.use('/posts', postsRouter);
-app.use('/blogs', bloggersRouter);
+app.use('/blogs', blogsRouter);
 app.use('/testing', testingRouter);
 
 const startApp = async () => {

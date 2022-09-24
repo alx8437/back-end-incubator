@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { body, Result, validationResult } from 'express-validator';
 import { getErrorMessage, TError } from './errors';
-import { bloggersCollection } from '../repositories/db';
+import { blogsCollection } from '../repositories/db';
 import { WithId } from 'mongodb';
 import { checkAuthorization } from './authorization';
-import { Blogger } from '../services/bloggers-service';
+import { Blog } from '../services/blogs-service';
 
 export const errorMiddleWare = (
     req: Request,
@@ -40,8 +40,8 @@ export const contentValidateMiddleware = body('content')
 
 export const isCorrectBlogIdMiddleware = body('blogId').custom(
     async (blogId) => {
-        const currentBlogger: WithId<Blogger> | null =
-            await bloggersCollection.findOne({ id: blogId });
+        const currentBlogger: WithId<Blog> | null =
+            await blogsCollection.findOne({ id: blogId });
         if (!currentBlogger) {
             throw new Error('BloggerId is not found');
         }
@@ -50,7 +50,7 @@ export const isCorrectBlogIdMiddleware = body('blogId').custom(
     },
 );
 
-export const bloggerNameValidateMiddleware = body('name')
+export const blogNameValidateMiddleware = body('name')
     .trim()
     .isLength({ min: 1, max: 15 });
 

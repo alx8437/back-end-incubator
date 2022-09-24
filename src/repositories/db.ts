@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-import { Blogger } from '../services/bloggers-service';
+import { Blog } from '../services/blogs-service';
 import { Post } from '../services/posts-service';
 
 const mongoURI =
@@ -8,10 +8,9 @@ const mongoURI =
 
 const client = new MongoClient(mongoURI);
 
-const DATA_BASE_BLOGGER = client.db('bloggers');
+const DATA_BASE_BLOGGER = client.db('blogs');
 
-export const bloggersCollection =
-    DATA_BASE_BLOGGER.collection<Blogger>('bloggers');
+export const blogsCollection = DATA_BASE_BLOGGER.collection<Blog>('blogs');
 
 export const postCollection = DATA_BASE_BLOGGER.collection<Post>('posts');
 
@@ -20,7 +19,7 @@ export async function runDB() {
     await client.connect();
 
     // Establish and verify connection
-    await client.db('bloggers').command({ ping: 1 });
+    await client.db('blogs').command({ ping: 1 });
     try {
     } catch {
         console.log('can not connect to db');
