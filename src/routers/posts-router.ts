@@ -3,7 +3,7 @@ import {
     authorizeMiddleware,
     contentValidateMiddleware,
     errorMiddleWare,
-    isCorrectBloggerIdMiddleware,
+    isCorrectBlogIdMiddleware,
     shortDescriptionValidateMiddleware,
     titleValidateMiddleware,
 } from '../utils/middlewares';
@@ -22,7 +22,7 @@ postsRouter.post(
     titleValidateMiddleware,
     shortDescriptionValidateMiddleware,
     contentValidateMiddleware,
-    isCorrectBloggerIdMiddleware,
+    isCorrectBlogIdMiddleware,
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {
@@ -42,7 +42,7 @@ postsRouter.put(
     titleValidateMiddleware,
     shortDescriptionValidateMiddleware,
     contentValidateMiddleware,
-    isCorrectBloggerIdMiddleware,
+    isCorrectBlogIdMiddleware,
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {

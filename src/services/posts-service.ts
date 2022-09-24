@@ -7,7 +7,7 @@ export type Post = {
     title: string;
     shortDescription: string;
     content: string;
-    bloggerId: string;
+    blogId: string;
     bloggerName: string;
     createdAt: string;
 };
@@ -21,19 +21,19 @@ export const postsService = {
 
     async createPost(body: {
         title: string;
-        bloggerId: string;
+        blogId: string;
         shortDescription: string;
         content: string;
     }): Promise<Post | null> {
-        const { title, bloggerId, shortDescription, content } = body;
-        const currentBlogger = await bloggersService.getBloggerById(bloggerId);
+        const { title, blogId, shortDescription, content } = body;
+        const currentBlogger = await bloggersService.getBloggerById(blogId);
 
         const newPost: Post = {
             id: Number(new Date()).toString(),
             title,
             shortDescription,
             content,
-            bloggerId,
+            blogId,
             // this value has validated middleware isCorrectBloggerIdMiddleware()
             bloggerName: currentBlogger!.name,
             createdAt: new Date().toISOString(),
@@ -50,16 +50,16 @@ export const postsService = {
         body: {
             content: string;
             title: string;
-            bloggerId: string;
+            blogId: string;
             shortDescription: string;
         },
     ): Promise<boolean> {
-        const { content, bloggerId, title, shortDescription } = body;
+        const { content, blogId, title, shortDescription } = body;
         const result: boolean = await postDBRepository.updatePost(
             id,
             content,
             title,
-            bloggerId,
+            blogId,
             shortDescription,
         );
 

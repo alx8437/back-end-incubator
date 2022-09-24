@@ -21,12 +21,12 @@ export const postDBRepository = {
         id: string,
         content: string,
         title: string,
-        bloggerId: string,
+        blogId: string,
         shortDescription: string,
     ): Promise<boolean> {
         const result: UpdateResult = await postCollection.updateOne(
             { id },
-            { $set: { content, bloggerId, title, shortDescription } },
+            { $set: { content, blogId, title, shortDescription } },
         );
 
         return result.matchedCount === 1;

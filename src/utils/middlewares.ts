@@ -38,10 +38,10 @@ export const contentValidateMiddleware = body('content')
     .trim()
     .isLength({ min: 1, max: 1000 });
 
-export const isCorrectBloggerIdMiddleware = body('bloggerId').custom(
-    async (bloggerId) => {
+export const isCorrectBlogIdMiddleware = body('blogId').custom(
+    async (blogId) => {
         const currentBlogger: WithId<Blogger> | null =
-            await bloggersCollection.findOne({ id: bloggerId });
+            await bloggersCollection.findOne({ id: blogId });
         if (!currentBlogger) {
             throw new Error('BloggerId is not found');
         }
