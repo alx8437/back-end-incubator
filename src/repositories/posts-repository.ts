@@ -31,19 +31,4 @@ export const postDBRepository = {
 
         return result.matchedCount === 1;
     },
-
-    async getPostById(id: string): Promise<Promise<Post> | null> {
-        const post: WithId<Post> | null = await postCollection.findOne(
-            { id },
-            { projection: { _id: 0 } },
-        );
-
-        return post;
-    },
-
-    async deletePostById(id: string): Promise<boolean> {
-        const result: DeleteResult = await postCollection.deleteOne({ id });
-
-        return result.deletedCount === 1;
-    },
 };

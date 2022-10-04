@@ -6,11 +6,12 @@ import {
     youtubeUrlValidateMiddleware,
 } from '../utils/middlewares';
 import { Blog, blogsService } from '../services/blogs-service';
+import { blogsCqrRepository } from '../repositories/cqr-repository/blogs-cqr-repository';
 
 export const blogsRouter = Router({});
 
 blogsRouter.get('/', async (req: Request, res: Response) => {
-    const blogs: Blog[] = await blogsService.getAllBloggers();
+    const blogs: Blog[] = await blogsCqrRepository.getAllBloggers();
     res.send(blogs);
 });
 
@@ -36,7 +37,9 @@ blogsRouter.post(
 );
 
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
-    const blog: Blog | null = await blogsService.getBloggerById(req.params.id);
+    const blog: Blog | null = await blogsCqrRepository.getBloggerById(
+        req.params.id,
+    );
     if (blog) {
         res.status(200).send(blog);
     } else {
@@ -66,7 +69,9 @@ blogsRouter.put(
 );
 
 blogsRouter.delete('/:id', authorizeMiddleware, async (req, res) => {
-    const isDeleted: boolean = await blogsService.deleteBlogger(req.params.id);
+    const isDeleted: boolean = await blogsCqrRepository.deleteBlogger(
+        req.params.id,
+    );
     if (isDeleted) {
         res.send(204);
     } else {

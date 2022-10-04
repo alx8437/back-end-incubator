@@ -27,18 +27,6 @@ export const blogsService = {
         return isCreated ? blogWithoutBaseId : null;
     },
 
-    async getAllBloggers(): Promise<Blog[]> {
-        const blogs: Blog[] = await blogsRepository.getAllBloggers();
-
-        return blogs;
-    },
-
-    async getBloggerById(id: string): Promise<Promise<Blog> | null> {
-        const blog: Blog | null = await blogsRepository.getBloggerById(id);
-
-        return blog;
-    },
-
     async updateBlogger(
         id: string,
         name: string,
@@ -49,12 +37,6 @@ export const blogsService = {
             name,
             youtubeUrl,
         );
-
-        return result;
-    },
-
-    async deleteBlogger(id: string): Promise<boolean> {
-        const result: boolean = await blogsRepository.deleteBlogger(id);
 
         return result;
     },

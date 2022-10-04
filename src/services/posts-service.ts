@@ -1,6 +1,7 @@
 import { postDBRepository } from '../repositories/posts-repository';
 import { blogsService } from './blogs-service';
 import { removeProperty } from '../utils';
+import { blogsCqrRepository } from '../repositories/cqr-repository/blogs-cqr-repository';
 
 export type Post = {
     id: string;
@@ -13,12 +14,6 @@ export type Post = {
 };
 
 export const postsService = {
-    async getPosts() {
-        const posts: Post[] = await postDBRepository.getPosts();
-
-        return posts;
-    },
-
     async createPost(body: {
         title: string;
         blogId: string;
@@ -26,7 +21,7 @@ export const postsService = {
         content: string;
     }): Promise<Post | null> {
         const { title, blogId, shortDescription, content } = body;
-        const currentBlogger = await blogsService.getBloggerById(blogId);
+        const currentBlogger = await blogsCqrRepository.getBloggerById(blogId);
 
         const newPost: Post = {
             id: Number(new Date()).toString(),
@@ -62,18 +57,6 @@ export const postsService = {
             blogId,
             shortDescription,
         );
-
-        return result;
-    },
-
-    async getPostById(id: string): Promise<Promise<Post> | null> {
-        const post: Post | null = await postDBRepository.getPostById(id);
-
-        return post;
-    },
-
-    async deletePostById(id: string): Promise<boolean> {
-        const result: boolean = await postDBRepository.deletePostById(id);
 
         return result;
     },
