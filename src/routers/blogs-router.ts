@@ -2,11 +2,15 @@ import { Request, Response, Router } from 'express';
 import {
     authorizeMiddleware,
     blogNameValidateMiddleware,
+    contentValidateMiddleware,
     errorMiddleWare,
+    shortDescriptionValidateMiddleware,
+    titleValidateMiddleware,
     youtubeUrlValidateMiddleware,
 } from '../utils/middlewares';
 import { Blog, blogsService } from '../services/blogs-service';
 import { blogsCqrRepository } from '../repositories/cqr-repository/blogs-cqr-repository';
+import { Post, postsService } from '../services/posts-service';
 
 export const blogsRouter = Router({});
 
@@ -32,6 +36,33 @@ blogsRouter.post(
             res.status(201).send(blog);
         } else {
             return res.status(500);
+        }
+    },
+);
+
+blogsRouter.post(
+    '/:id/posts',
+    authorizeMiddleware,
+    titleValidateMiddleware,
+    shortDescriptionValidateMiddleware,
+    contentValidateMiddleware,
+    // should be last
+    errorMiddleWare,
+    async (req: Request, res: Response) => {
+        const blogId = req.params.id;
+        const blog: Blog | null = await blogsCqrRepository.getBloggerById(
+            blogId,
+        );
+        if (blog) {
+            const { body } = req;
+            const newPost: Post | null = await postsService.createPost({
+                ...body,
+                blogId,
+            });
+
+            newPost ? res.status(201).send(newPost) : res.send(500);
+        } else {
+            res.send(404);
         }
     },
 );
