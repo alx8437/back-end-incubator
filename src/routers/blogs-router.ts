@@ -92,14 +92,17 @@ blogsRouter.get(
         const { id } = req.params;
         const queryParams = req.query as Query & ParamsBlogPost;
 
-        const posts: GetPostsFromBlogPayload | null =
-            await blogsQueryRepository.getPostsFromBlog(queryParams, id);
+        const validBlog: Blog | null =
+            await blogsQueryRepository.getBloggerById(id);
 
-        if (posts) {
-            res.status(200).send(posts);
-        } else {
+        if (!validBlog) {
             res.send(404);
         }
+
+        const result: GetPostsFromBlogPayload =
+            await blogsQueryRepository.getPostsFromBlog(queryParams, id);
+
+        res.status(200).send(result);
     },
 );
 

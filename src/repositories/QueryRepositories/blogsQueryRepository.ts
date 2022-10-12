@@ -47,16 +47,17 @@ export const blogsQueryRepository = {
     async getPostsFromBlog(
         params: Query & ParamsBlogPost,
         blogId: string,
-    ): Promise<GetPostsFromBlogPayload | null> {
+    ): Promise<GetPostsFromBlogPayload> {
         const { sortBy, sortDirection, pageSize, pageNumber } = params;
 
         const skipCount = getSkipCount(pageNumber, pageSize);
 
-        const posts: Post[] = await postCollection
-            .find({ blogId }, { projection: { _id: 0 } })
-            .sort(sortBy, sortDirection)
-            .skip(skipCount)
-            .toArray();
+        const posts: Post[] =
+            (await postCollection
+                .find({ blogId }, { projection: { _id: 0 } })
+                .sort(sortBy, sortDirection)
+                .skip(skipCount)
+                .toArray()) || [];
 
         const totalCount = posts.length;
         const pagesCount = getPageCount(totalCount, pageSize);

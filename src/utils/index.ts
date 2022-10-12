@@ -13,5 +13,5 @@ export const getSkipCount = (pageNumber: number, pageSize: number): number => {
 };
 
 export const getPageCount = (itemCount: number, pageSize: number) => {
-    return Math.ceil(itemCount / pageSize) | 1;
+    return pageSize === 0 ? 1 : Math.ceil(itemCount / pageSize);
 };
