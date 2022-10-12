@@ -9,13 +9,19 @@ import {
     youtubeUrlValidateMiddleware,
 } from '../utils/middlewares';
 import { Blog, blogsService } from '../services/blogs-service';
-import { blogsCqrRepository } from '../repositories/cqr-repository/blogs-cqr-repository';
+import {
+    blogsQueryRepository,
+    GetPostsFromBlogPayload,
+    ParamsBlogPost,
+} from '../repositories/QueryRepositories/blogsQueryRepository';
 import { Post, postsService } from '../services/posts-service';
+import { query } from 'express-validator';
+import { Query } from 'express-serve-static-core';
 
 export const blogsRouter = Router({});
 
 blogsRouter.get('/', async (req: Request, res: Response) => {
-    const blogs: Blog[] = await blogsCqrRepository.getAllBloggers();
+    const blogs: Blog[] = await blogsQueryRepository.getAllBloggers();
     res.send(blogs);
 });
 
@@ -50,7 +56,7 @@ blogsRouter.post(
     errorMiddleWare,
     async (req: Request, res: Response) => {
         const blogId = req.params.id;
-        const blog: Blog | null = await blogsCqrRepository.getBloggerById(
+        const blog: Blog | null = await blogsQueryRepository.getBloggerById(
             blogId,
         );
         if (blog) {
@@ -68,7 +74,7 @@ blogsRouter.post(
 );
 
 blogsRouter.get('/:id', async (req: Request, res: Response) => {
-    const blog: Blog | null = await blogsCqrRepository.getBloggerById(
+    const blog: Blog | null = await blogsQueryRepository.getBloggerById(
         req.params.id,
     );
     if (blog) {
@@ -77,6 +83,25 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
         res.send(404);
     }
 });
+
+blogsRouter.get(
+    '/:id/posts',
+    query('pageNumber').toInt(),
+    query('pageSize').toInt(),
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const queryParams = req.query as Query & ParamsBlogPost;
+
+        const posts: GetPostsFromBlogPayload | null =
+            await blogsQueryRepository.getPostsFromBlog(queryParams, id);
+
+        if (posts) {
+            res.status(200).send(posts);
+        } else {
+            res.send(404);
+        }
+    },
+);
 
 blogsRouter.put(
     '/:id',
@@ -100,7 +125,7 @@ blogsRouter.put(
 );
 
 blogsRouter.delete('/:id', authorizeMiddleware, async (req, res) => {
-    const isDeleted: boolean = await blogsCqrRepository.deleteBlogger(
+    const isDeleted: boolean = await blogsQueryRepository.deleteBlogger(
         req.params.id,
     );
     if (isDeleted) {

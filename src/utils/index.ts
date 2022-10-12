@@ -8,5 +8,10 @@ export const removeProperty = (object: any, property: string): Object => {
     return object;
 };
 
-// pagination skip formula = (pageNumber - 1) * pageSize;
-// page count formula = Math.ceil(count num / pageSize)
+export const getSkipCount = (pageNumber: number, pageSize: number): number => {
+    return (pageNumber - 1) * pageSize;
+};
+
+export const getPageCount = (itemCount: number, pageSize: number) => {
+    return Math.ceil(itemCount / pageSize) | 1;
+};

@@ -3,7 +3,7 @@ import { DeleteResult, WithId } from 'mongodb';
 import { postCollection } from '../db';
 import { postDBRepository } from '../posts-repository';
 
-export const postCqrRepository = {
+export const postQueryRepository = {
     async getPostById(id: string): Promise<Promise<Post> | null> {
         const post: WithId<Post> | null = await postCollection.findOne(
             { id },

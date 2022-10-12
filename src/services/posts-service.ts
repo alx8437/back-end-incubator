@@ -1,7 +1,7 @@
 import { postDBRepository } from '../repositories/posts-repository';
 import { blogsService } from './blogs-service';
 import { removeProperty } from '../utils';
-import { blogsCqrRepository } from '../repositories/cqr-repository/blogs-cqr-repository';
+import { blogsQueryRepository } from '../repositories/QueryRepositories/blogsQueryRepository';
 
 export type Post = {
     id: string;
@@ -21,7 +21,9 @@ export const postsService = {
         content: string;
     }): Promise<Post | null> {
         const { title, blogId, shortDescription, content } = body;
-        const currentBlogger = await blogsCqrRepository.getBloggerById(blogId);
+        const currentBlogger = await blogsQueryRepository.getBloggerById(
+            blogId,
+        );
 
         const newPost: Post = {
             id: Number(new Date()).toString(),

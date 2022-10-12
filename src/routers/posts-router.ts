@@ -8,12 +8,12 @@ import {
     titleValidateMiddleware,
 } from '../utils/middlewares';
 import { Post, postsService } from '../services/posts-service';
-import { postCqrRepository } from '../repositories/cqr-repository/post-cqr-repository';
+import { postQueryRepository } from '../repositories/QueryRepositories/postQueryRepository';
 
 export const postsRouter = Router({});
 
 postsRouter.get('/', async (req: Request, res: Response) => {
-    const posts: Post[] = await postCqrRepository.getPosts();
+    const posts: Post[] = await postQueryRepository.getPosts();
     res.send(posts);
 });
 
@@ -61,7 +61,7 @@ postsRouter.put(
 );
 
 postsRouter.get('/:id', async (req: Request, res: Response) => {
-    const postById: Post | null = await postCqrRepository.getPostById(
+    const postById: Post | null = await postQueryRepository.getPostById(
         req.params.id,
     );
 
@@ -76,7 +76,7 @@ postsRouter.delete(
     '/:id',
     authorizeMiddleware,
     async (req: Request, res: Response) => {
-        const isDeleted: boolean = await postCqrRepository.deletePostById(
+        const isDeleted: boolean = await postQueryRepository.deletePostById(
             req.params.id,
         );
 
