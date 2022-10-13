@@ -10,23 +10,49 @@ export type ParamsBlogPost = {
     pageSize: number;
     sortBy: string;
     sortDirection: 'asc' | 'desc';
+    searchNameTerm?: string;
 };
 
-export type GetPostsFromBlogPayload = {
+export type QueryParamsTypes = Query & ParamsBlogPost;
+
+export type GetItemsPayload<T> = {
     pagesCount: number;
     page: number;
     pageSize: number;
     totalCount: number;
-    items: Array<Post>;
+    items: Array<T>;
 };
 
 export const blogsQueryRepository = {
-    async getAllBloggers(): Promise<Blog[]> {
-        const blogs: WithId<Blog>[] = await blogsCollection
-            .find({}, { projection: { _id: 0 } })
-            .toArray();
+    async getAllBloggers(
+        queryParams: QueryParamsTypes,
+    ): Promise<GetItemsPayload<Blog>> {
+        const { sortBy, pageNumber, pageSize, sortDirection, searchNameTerm } =
+            queryParams;
+        const skipCount = getSkipCount(pageNumber, pageSize);
 
-        return blogs;
+        const blogs: Blog[] =
+            (await blogsCollection
+                .find(
+                    { name: { $regex: searchNameTerm } },
+                    { projection: { _id: 0 } },
+                )
+                .sort(sortBy, sortDirection)
+                .skip(skipCount)
+                .toArray()) || [];
+
+        const totalCount = blogs.length;
+        const pagesCount = getPageCount(totalCount, pageSize);
+
+        const result: GetItemsPayload<Blog> = {
+            pagesCount,
+            page: pageNumber,
+            pageSize,
+            totalCount,
+            items: blogs,
+        };
+
+        return result;
     },
 
     async getBloggerById(id: string): Promise<Promise<Blog> | null> {
@@ -47,7 +73,7 @@ export const blogsQueryRepository = {
     async getPostsFromBlog(
         params: Query & ParamsBlogPost,
         blogId: string,
-    ): Promise<GetPostsFromBlogPayload> {
+    ): Promise<GetItemsPayload<Post>> {
         const { sortBy, sortDirection, pageSize, pageNumber } = params;
 
         const skipCount = getSkipCount(pageNumber, pageSize);
@@ -62,7 +88,7 @@ export const blogsQueryRepository = {
         const totalCount = posts.length;
         const pagesCount = getPageCount(totalCount, pageSize);
 
-        const result: GetPostsFromBlogPayload = {
+        const result: GetItemsPayload<Post> = {
             pagesCount,
             page: pageNumber,
             pageSize,

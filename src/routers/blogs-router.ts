@@ -11,19 +11,29 @@ import {
 import { Blog, blogsService } from '../services/blogs-service';
 import {
     blogsQueryRepository,
-    GetPostsFromBlogPayload,
+    GetItemsPayload,
     ParamsBlogPost,
+    QueryParamsTypes,
 } from '../repositories/QueryRepositories/blogsQueryRepository';
 import { Post, postsService } from '../services/posts-service';
 import { query } from 'express-validator';
 import { Query } from 'express-serve-static-core';
+import { getQueryParams } from '../utils';
 
 export const blogsRouter = Router({});
 
-blogsRouter.get('/', async (req: Request, res: Response) => {
-    const blogs: Blog[] = await blogsQueryRepository.getAllBloggers();
-    res.send(blogs);
-});
+blogsRouter.get(
+    '/',
+    query('pageNumber').toInt(),
+    query('pageSize').toInt(),
+    async (req: Request, res: Response) => {
+        const { queryParams } = getQueryParams(req);
+
+        const result: GetItemsPayload<Blog> =
+            await blogsQueryRepository.getAllBloggers(queryParams);
+        res.send(result);
+    },
+);
 
 blogsRouter.post(
     '/',
@@ -89,8 +99,7 @@ blogsRouter.get(
     query('pageNumber').toInt(),
     query('pageSize').toInt(),
     async (req: Request, res: Response) => {
-        const { id } = req.params;
-        const queryParams = req.query as Query & ParamsBlogPost;
+        const { id, queryParams } = getQueryParams(req);
 
         // const validBlog: Blog | null =
         //     await blogsQueryRepository.getBloggerById(id);
@@ -99,7 +108,7 @@ blogsRouter.get(
         //     res.send(404);
         // }
 
-        const result: GetPostsFromBlogPayload =
+        const result: GetItemsPayload<Post> =
             await blogsQueryRepository.getPostsFromBlog(queryParams, id);
 
         res.status(200).send(result);
