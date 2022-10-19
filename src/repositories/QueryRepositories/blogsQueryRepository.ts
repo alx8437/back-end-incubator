@@ -32,8 +32,10 @@ export const blogsQueryRepository = {
             queryParams;
         const skipCount = getSkipCount(pageNumber, pageSize);
 
+        const regExp: RegExp = new RegExp(`${searchNameTerm}`, 'i');
+
         const filter = {
-            name: { $regex: searchNameTerm ? searchNameTerm : '' },
+            name: { $regex: regExp },
         };
 
         const blogs: Blog[] =
