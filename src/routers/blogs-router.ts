@@ -95,8 +95,11 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
 
 blogsRouter.get(
     '/:id/posts',
-    query('pageNumber').toInt(),
-    query('pageSize').toInt(),
+    query('pageNumber').toInt().default(1),
+    query('pageSize').toInt().default(10),
+    query('searchNameTerm').default(''),
+    query('sortBy').default('createdAt'),
+    query('sortDirection').default('desc'),
     async (req: Request, res: Response) => {
         const { queryParams, id } = getQueryParams(req);
 

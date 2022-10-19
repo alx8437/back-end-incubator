@@ -41,6 +41,7 @@ export const blogsQueryRepository = {
                 .find(filter, { projection: { _id: 0 } })
                 .sort(sortBy, sortDirection)
                 .skip(skipCount)
+                .limit(pageSize)
                 .toArray()) || [];
 
         const totalCount = await blogsCollection.countDocuments(filter);
@@ -85,6 +86,7 @@ export const blogsQueryRepository = {
                 .find({ blogId }, { projection: { _id: 0 } })
                 .sort(sortBy, sortDirection)
                 .skip(skipCount)
+                .limit(pageSize)
                 .toArray()) || [];
 
         const totalCount = posts.length;
