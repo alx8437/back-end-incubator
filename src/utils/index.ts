@@ -1,9 +1,5 @@
 import { Request } from 'express';
-import { Query } from 'express-serve-static-core';
-import {
-    ParamsBlogPost,
-    QueryParamsTypes,
-} from '../repositories/QueryRepositories/blogsQueryRepository';
+import { QueryParamsTypes } from '../repositories/QueryRepositories/blogsQueryRepository';
 
 export const removeProperty = (object: any, property: string): Object => {
     const properties: string[] = Object.getOwnPropertyNames(object);

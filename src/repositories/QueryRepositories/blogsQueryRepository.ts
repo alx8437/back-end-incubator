@@ -21,6 +21,7 @@ export type GetItemsPayload<T> = {
     pageSize: number;
     totalCount: number;
     items: Array<T>;
+    searchNameTerm?: string;
 };
 
 export const blogsQueryRepository = {
@@ -31,17 +32,18 @@ export const blogsQueryRepository = {
             queryParams;
         const skipCount = getSkipCount(pageNumber, pageSize);
 
+        const filter = {
+            name: { $regex: searchNameTerm ? searchNameTerm : '' },
+        };
+
         const blogs: Blog[] =
             (await blogsCollection
-                .find(
-                    { name: { $regex: searchNameTerm } },
-                    { projection: { _id: 0 } },
-                )
+                .find(filter, { projection: { _id: 0 } })
                 .sort(sortBy, sortDirection)
                 .skip(skipCount)
                 .toArray()) || [];
 
-        const totalCount = blogs.length;
+        const totalCount = await blogsCollection.countDocuments(filter);
         const pagesCount = getPageCount(totalCount, pageSize);
 
         const result: GetItemsPayload<Blog> = {
