@@ -5,7 +5,7 @@ import { Query } from 'express-serve-static-core';
 import { Post } from '../../services/posts-service';
 import { getPageCount, getSkipCount } from '../../utils';
 
-export type ParamsBlogPost = {
+export type QueryParams = {
     pageNumber: number;
     pageSize: number;
     sortBy: string;
@@ -13,7 +13,7 @@ export type ParamsBlogPost = {
     searchNameTerm?: string;
 };
 
-export type QueryParamsTypes = Query & ParamsBlogPost;
+export type QueryParamsTypes = Query & QueryParams;
 
 export type GetItemsPayload<T> = {
     pagesCount: number;
@@ -76,7 +76,7 @@ export const blogsQueryRepository = {
     },
 
     async getPostsFromBlog(
-        params: Query & ParamsBlogPost,
+        params: Query & QueryParams,
         blogId: string,
     ): Promise<GetItemsPayload<Post>> {
         const { sortBy, sortDirection, pageSize, pageNumber } = params;
@@ -91,7 +91,7 @@ export const blogsQueryRepository = {
                 .limit(pageSize)
                 .toArray()) || [];
 
-        const totalCount = posts.length;
+        const totalCount = await postCollection.countDocuments();
         const pagesCount = getPageCount(totalCount, pageSize);
 
         const result: GetItemsPayload<Post> = {

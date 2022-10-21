@@ -1,7 +1,8 @@
 import { Post } from '../../services/posts-service';
 import { DeleteResult, WithId } from 'mongodb';
 import { postCollection } from '../db';
-import { postDBRepository } from '../posts-repository';
+import { GetItemsPayload, QueryParamsTypes } from './blogsQueryRepository';
+import { getPageCount, getSkipCount } from '../../utils';
 
 export const postQueryRepository = {
     async getPostById(id: string): Promise<Promise<Post> | null> {
@@ -19,9 +20,31 @@ export const postQueryRepository = {
         return result.deletedCount === 1;
     },
 
-    async getPosts() {
-        const posts: Post[] = await postDBRepository.getPosts();
+    async getPosts(
+        queryParams: QueryParamsTypes,
+    ): Promise<GetItemsPayload<Post>> {
+        const { sortBy, pageNumber, pageSize, sortDirection } = queryParams;
 
-        return posts;
+        const skipCount = getSkipCount(pageNumber, pageSize);
+        const totalCount = await postCollection.countDocuments();
+        const pagesCount = getPageCount(totalCount, pageSize);
+
+        const posts: Post[] =
+            (await postCollection
+                .find()
+                .sort(sortBy, sortDirection)
+                .skip(skipCount)
+                .limit(pageSize)
+                .toArray()) || [];
+
+        const result: GetItemsPayload<Post> = {
+            pagesCount,
+            page: pageNumber,
+            pageSize,
+            totalCount,
+            items: posts,
+        };
+
+        return result;
     },
 };

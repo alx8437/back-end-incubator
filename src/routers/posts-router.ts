@@ -9,13 +9,27 @@ import {
 } from '../utils/middlewares';
 import { Post, postsService } from '../services/posts-service';
 import { postQueryRepository } from '../repositories/QueryRepositories/postQueryRepository';
+import { GetItemsPayload } from '../repositories/QueryRepositories/blogsQueryRepository';
+import { query } from 'express-validator';
+import { getQueryParams } from '../utils';
 
 export const postsRouter = Router({});
 
-postsRouter.get('/', async (req: Request, res: Response) => {
-    const posts: Post[] = await postQueryRepository.getPosts();
-    res.send(posts);
-});
+postsRouter.get(
+    '/',
+    query('pageNumber').toInt().default(1),
+    query('pageSize').toInt().default(10),
+    query('searchNameTerm').default(''),
+    query('sortBy').default('createdAt'),
+    query('sortDirection').default('desc'),
+    async (req: Request, res: Response) => {
+        const { queryParams } = getQueryParams(req);
+
+        const result: GetItemsPayload<Post> =
+            await postQueryRepository.getPosts(queryParams);
+        res.send(result);
+    },
+);
 
 postsRouter.post(
     '/',
