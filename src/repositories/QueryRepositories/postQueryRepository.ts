@@ -31,7 +31,7 @@ export const postQueryRepository = {
 
         const posts: Post[] =
             (await postCollection
-                .find()
+                .find({}, { projection: { _id: 0 } })
                 .sort(sortBy, sortDirection)
                 .skip(skipCount)
                 .limit(pageSize)
