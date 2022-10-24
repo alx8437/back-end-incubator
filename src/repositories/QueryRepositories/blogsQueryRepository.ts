@@ -91,7 +91,7 @@ export const blogsQueryRepository = {
                 .limit(pageSize)
                 .toArray()) || [];
 
-        const totalCount = await postCollection.countDocuments();
+        const totalCount = await postCollection.countDocuments({ blogId });
         const pagesCount = getPageCount(totalCount, pageSize);
 
         const result: GetItemsPayload<Post> = {
