@@ -1,12 +1,12 @@
 import { Post } from '../../services/posts-service';
 import { DeleteResult, WithId } from 'mongodb';
-import { postCollection } from '../db';
+import { postsCollection } from '../db';
 import { GetItemsPayload, QueryParamsTypes } from './blogsQueryRepository';
 import { getPageCount, getSkipCount } from '../../utils';
 
 export const postQueryRepository = {
     async getPostById(id: string): Promise<Promise<Post> | null> {
-        const post: WithId<Post> | null = await postCollection.findOne(
+        const post: WithId<Post> | null = await postsCollection.findOne(
             { id },
             { projection: { _id: 0 } },
         );
@@ -15,7 +15,7 @@ export const postQueryRepository = {
     },
 
     async deletePostById(id: string): Promise<boolean> {
-        const result: DeleteResult = await postCollection.deleteOne({ id });
+        const result: DeleteResult = await postsCollection.deleteOne({ id });
 
         return result.deletedCount === 1;
     },
@@ -26,11 +26,11 @@ export const postQueryRepository = {
         const { sortBy, pageNumber, pageSize, sortDirection } = queryParams;
 
         const skipCount = getSkipCount(pageNumber, pageSize);
-        const totalCount = await postCollection.countDocuments();
+        const totalCount = await postsCollection.countDocuments();
         const pagesCount = getPageCount(totalCount, pageSize);
 
         const posts: Post[] =
-            (await postCollection
+            (await postsCollection
                 .find({}, { projection: { _id: 0 } })
                 .sort(sortBy, sortDirection)
                 .skip(skipCount)

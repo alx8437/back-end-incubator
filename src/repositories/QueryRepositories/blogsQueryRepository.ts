@@ -1,6 +1,6 @@
 import { Blog } from '../../services/blogs-service';
 import { DeleteResult, WithId } from 'mongodb';
-import { blogsCollection, postCollection } from '../db';
+import { blogsCollection, postsCollection } from '../db';
 import { Query } from 'express-serve-static-core';
 import { Post } from '../../services/posts-service';
 import { getPageCount, getSkipCount } from '../../utils';
@@ -84,14 +84,14 @@ export const blogsQueryRepository = {
         const skipCount = getSkipCount(pageNumber, pageSize);
 
         const posts: Post[] =
-            (await postCollection
+            (await postsCollection
                 .find({ blogId }, { projection: { _id: 0 } })
                 .sort(sortBy, sortDirection)
                 .skip(skipCount)
                 .limit(pageSize)
                 .toArray()) || [];
 
-        const totalCount = await postCollection.countDocuments({ blogId });
+        const totalCount = await postsCollection.countDocuments({ blogId });
         const pagesCount = getPageCount(totalCount, pageSize);
 
         const result: GetItemsPayload<Post> = {

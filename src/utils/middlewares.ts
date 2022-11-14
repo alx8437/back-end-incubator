@@ -59,6 +59,16 @@ export const youtubeUrlValidateMiddleware = body('youtubeUrl')
     .isURL()
     .isLength({ max: 100 });
 
+export const loginValidateMiddleware = body('login')
+    .trim()
+    .isLength({ min: 3, max: 10 });
+
+export const passwordValidateMiddleware = body('password')
+    .trim()
+    .isLength({ min: 6, max: 20 });
+
+export const emailValidateMiddleware = body('email').isEmail();
+
 export const authorizeMiddleware = (
     req: Request,
     res: Response,

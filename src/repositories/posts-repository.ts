@@ -1,10 +1,10 @@
-import { DeleteResult, InsertOneResult, UpdateResult, WithId } from 'mongodb';
+import { InsertOneResult, UpdateResult } from 'mongodb';
 import { Post } from '../services/posts-service';
-import { postCollection } from './db';
+import { postsCollection } from './db';
 
 export const postDBRepository = {
     async getPosts() {
-        const posts: Post[] = await postCollection
+        const posts: Post[] = await postsCollection
             .find({}, { projection: { _id: 0 } })
             .toArray();
 
@@ -12,7 +12,7 @@ export const postDBRepository = {
     },
 
     async createPost(post: Post): Promise<boolean> {
-        const result: InsertOneResult = await postCollection.insertOne(post);
+        const result: InsertOneResult = await postsCollection.insertOne(post);
 
         return result.acknowledged;
     },
@@ -24,7 +24,7 @@ export const postDBRepository = {
         blogId: string,
         shortDescription: string,
     ): Promise<boolean> {
-        const result: UpdateResult = await postCollection.updateOne(
+        const result: UpdateResult = await postsCollection.updateOne(
             { id },
             { $set: { content, blogId, title, shortDescription } },
         );

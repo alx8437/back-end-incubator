@@ -5,6 +5,7 @@ import { postsRouter } from './routers/posts-router';
 import { blogsRouter } from './routers/blogs-router';
 import { runDB } from './repositories/db';
 import { testingRouter } from './routers/testing-router';
+import { usersRouter } from './routers/users-router';
 
 const app = express();
 const corsMiddleware = cors();
@@ -23,6 +24,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/posts', postsRouter);
 app.use('/blogs', blogsRouter);
 app.use('/testing', testingRouter);
+app.use('/users', usersRouter);
 
 const startApp = async () => {
     await runDB();
