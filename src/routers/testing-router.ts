@@ -7,6 +7,6 @@ testingRouter.delete('/all-data', async (req: Request, res: Response) => {
     const isDeleted: boolean = await testingService.deleteAllData();
 
     if (isDeleted) {
-        res.send(204);
+        res.sendStatus(204);
     }
 });

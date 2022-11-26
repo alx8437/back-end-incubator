@@ -12,11 +12,11 @@ export const blogsRepository = {
     async updateBlogger(
         id: string,
         name: string,
-        youtubeUrl: string,
+        websiteUrl: string,
     ): Promise<boolean> {
         const result: UpdateResult = await blogsCollection.updateOne(
             { id },
-            { $set: { name, youtubeUrl } },
+            { $set: { name, websiteUrl } },
         );
 
         return result.matchedCount === 1;

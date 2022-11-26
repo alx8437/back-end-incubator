@@ -4,20 +4,23 @@ import { removeProperty } from '../utils';
 export type Blog = {
     id: string;
     name: string;
-    youtubeUrl: string;
+    websiteUrl: string;
     createdAt: string;
+    description: string;
 };
 
 export const blogsService = {
     async createBlogger(
         name: string,
-        youtubeUrl: string,
+        websiteUrl: string,
+        description: string,
     ): Promise<Blog | null> {
         const newBlog: Blog = {
             id: Number(new Date()).toString(),
             name,
-            youtubeUrl,
+            websiteUrl,
             createdAt: new Date().toISOString(),
+            description,
         };
 
         const isCreated = await blogsRepository.createBlogger(newBlog);
@@ -30,12 +33,12 @@ export const blogsService = {
     async updateBlogger(
         id: string,
         name: string,
-        youtubeUrl: string,
+        websiteUrl: string,
     ): Promise<boolean> {
         const result: boolean = await blogsRepository.updateBlogger(
             id,
             name,
-            youtubeUrl,
+            websiteUrl,
         );
 
         return result;

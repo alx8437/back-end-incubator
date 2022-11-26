@@ -6,7 +6,7 @@ import {
     errorMiddleWare,
     shortDescriptionValidateMiddleware,
     titleValidateMiddleware,
-    youtubeUrlValidateMiddleware,
+    websiteUrlValidateMiddleware,
 } from '../utils/middlewares';
 import { Blog, blogsService } from '../services/blogs-service';
 import {
@@ -38,13 +38,14 @@ blogsRouter.post(
     '/',
     authorizeMiddleware,
     blogNameValidateMiddleware,
-    youtubeUrlValidateMiddleware,
+    websiteUrlValidateMiddleware,
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {
         const blog: Blog | null = await blogsService.createBlogger(
             req.body.name,
-            req.body.youtubeUrl,
+            req.body.websiteUrl,
+            req.body.description,
         );
 
         if (blog) {
@@ -122,13 +123,13 @@ blogsRouter.put(
     '/:id',
     authorizeMiddleware,
     blogNameValidateMiddleware,
-    youtubeUrlValidateMiddleware,
+    websiteUrlValidateMiddleware,
     errorMiddleWare,
     async (req: Request, res: Response) => {
         const isUpdate: boolean = await blogsService.updateBlogger(
             req.params.id,
             req.body.name,
-            req.body.youtubeUrl,
+            req.body.websiteUrl,
         );
 
         if (isUpdate) {

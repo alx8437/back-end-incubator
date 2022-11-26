@@ -54,12 +54,12 @@ export const blogNameValidateMiddleware = body('name')
     .trim()
     .isLength({ min: 1, max: 15 });
 
-export const youtubeUrlValidateMiddleware = body('youtubeUrl')
+export const websiteUrlValidateMiddleware = body('websiteUrl')
     .trim()
     .isURL()
     .isLength({ max: 100 });
 
-export const loginValidateMiddleware = body('login')
+export const loginOrEmailValidateMiddleware = body('login')
     .trim()
     .isLength({ min: 3, max: 10 });
 

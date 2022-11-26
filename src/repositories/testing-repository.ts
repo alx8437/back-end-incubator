@@ -1,5 +1,5 @@
 import { DeleteResult } from 'mongodb';
-import { blogsCollection, postsCollection } from './db';
+import { blogsCollection, postsCollection, usersCollection } from './db';
 
 export const testingRepository = {
     async deleteAllData(): Promise<boolean> {
@@ -8,6 +8,9 @@ export const testingRepository = {
 
         const deletePostsResult: DeleteResult =
             await postsCollection.deleteMany({});
+
+        const deleteUsersResult: DeleteResult =
+            await usersCollection.deleteMany({});
 
         return (
             deleteBloggersResult.acknowledged && deletePostsResult.acknowledged

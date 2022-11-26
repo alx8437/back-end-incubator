@@ -4,7 +4,7 @@ import { usersCollection } from './db';
 export type TUserDBType = {
     _id: ObjectId;
     id: string;
-    login: string;
+    loginOrEmail: string;
     email: string;
     createdAt: string;
     passwordHash: string;
