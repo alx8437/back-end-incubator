@@ -78,7 +78,7 @@ blogsRouter.post(
 
             newPost ? res.status(201).send(newPost) : res.send(500);
         } else {
-            res.send(404);
+            res.sendStatus(404);
         }
     },
 );
@@ -90,7 +90,7 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
     if (blog) {
         res.status(200).send(blog);
     } else {
-        res.send(404);
+        res.sendStatus(404);
     }
 });
 
@@ -108,7 +108,7 @@ blogsRouter.get(
             await blogsQueryRepository.getBloggerById(id);
 
         if (!validBlog) {
-            res.send(404);
+            res.sendStatus(404);
             return;
         }
 
@@ -133,9 +133,9 @@ blogsRouter.put(
         );
 
         if (isUpdate) {
-            res.send(204);
+            res.sendStatus(204);
         } else {
-            res.send(404);
+            res.sendStatus(404);
         }
     },
 );
@@ -145,8 +145,8 @@ blogsRouter.delete('/:id', authorizeMiddleware, async (req, res) => {
         req.params.id,
     );
     if (isDeleted) {
-        res.send(204);
+        res.sendStatus(204);
     } else {
-        res.send(404);
+        res.sendStatus(404);
     }
 });

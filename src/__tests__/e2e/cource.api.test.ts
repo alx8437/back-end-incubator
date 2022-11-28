@@ -7,7 +7,6 @@ import {
 import { Post } from '../../services/posts-service';
 import { Blog } from '../../services/blogs-service';
 import { app, HTTP_STATUS_CODES } from '../../index';
-import { body } from 'express-validator';
 
 const queryParams: QueryParams = {
     pageNumber: 1,
@@ -23,13 +22,16 @@ const badInputModelField =
 
 // Blogs
 describe('Remove all data before run tests', () => {
+    let blog: Blog;
+    let post: Post;
+
     beforeAll(async () => {
         await request(app)
             .delete('/testing/all-data')
             .expect(HTTP_STATUS_CODES.NO_CONTENT_SUCCESS_204);
     });
 
-    // Create new blog for post
+    // Create new blog
     it('Should create new Blog', async () => {
         const blogBody = {
             name: 'New blogger',
@@ -43,6 +45,8 @@ describe('Remove all data before run tests', () => {
             .set(authorizationData)
             .expect(HTTP_STATUS_CODES.SUCCESS_CREATED_201);
 
+        blog = blogResponse.body;
+
         expect(blogResponse.body as Blog).toEqual({
             id: expect.any(String),
             name: blogBody.name,
@@ -50,6 +54,179 @@ describe('Remove all data before run tests', () => {
             websiteUrl: blogBody.websiteUrl,
             createdAt: expect.any(String),
         });
+
+        // if field has invalidValues
+        const badBlogBody = {
+            name: badInputModelField,
+            description: 'I am the best man',
+            websiteUrl: 'www.myWebsite.com',
+        };
+
+        await request(app)
+            .post('/blogs')
+            .send(badBlogBody)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.BAD_REQUEST_400);
+
+        // if not authorized
+        await request(app)
+            .post('/blogs')
+            .send(blogBody)
+            .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401);
+    });
+
+    // Get all blogs
+    it('Should get all blogs', async () => {
+        const blogsResponse = await request(app)
+            .get('/blogs')
+            .query({ ...queryParams })
+            .expect(HTTP_STATUS_CODES.SUCCESS_200);
+
+        expect(blogsResponse.body.items.length).toBe(1);
+    });
+
+    // Returns all posts for specified blog
+    it('Should return all posts from blog', async () => {
+        // Create new post for blog
+        const postBody = {
+            title: 'new post',
+            shortDescription: 'description',
+            content: 'content',
+            blogId: blog.id,
+        };
+
+        const postResponse = await request(app)
+            .post('/posts')
+            .send(postBody)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.SUCCESS_CREATED_201);
+
+        post = postResponse.body;
+
+        const allPostsFromBlogResponse = await request(app)
+            .get(`/blogs/${blog.id}/posts`)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.SUCCESS_200);
+
+        expect(allPostsFromBlogResponse.body.items).toHaveLength(1);
+
+        // If send fake blogId should return 404 NotFound
+        await request(app)
+            .get(`/blogs/fakeId/posts`)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.NOT_FOUND_404);
+    });
+
+    // Should create new post for specific blog
+    it('Create new post for specific blog', async () => {
+        const postBody = {
+            title: 'new post',
+            shortDescription: 'description',
+            content: 'content',
+            blogId: blog.id,
+        };
+
+        const post = await request(app)
+            .post(`/blogs/${blog.id}/posts`)
+            .send(postBody)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.SUCCESS_CREATED_201);
+
+        expect(post.body.blogId).toBe(blog.id);
+
+        // If the inputModel has incorrect values
+        const incorrectPostBody = {
+            title: badInputModelField,
+            shortDescription: 'description',
+            content: 'content',
+            blogId: blog.id,
+        };
+
+        await request(app)
+            .post(`/blogs/${blog.id}/posts`)
+            .send(incorrectPostBody)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.BAD_REQUEST_400);
+
+        // If unauthorized
+        await request(app)
+            .post(`/blogs/${blog.id}/posts`)
+            .send(postBody)
+            .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401);
+    });
+
+    // Returns blog by id
+    it('Returns blog by id', async () => {
+        const blogResponse = await request(app)
+            .get(`/blogs/${blog.id}`)
+            .expect(HTTP_STATUS_CODES.SUCCESS_200);
+
+        expect(blogResponse.body.id).toBe(blog.id);
+
+        // If fake id
+        await request(app)
+            .get('/blogs/fakeId')
+            .expect(HTTP_STATUS_CODES.NOT_FOUND_404);
+    });
+
+    // Update existing Blog by id with InputModel
+    it('Update existing Blog by id with InputModel', async () => {
+        const bodyForUpdate = {
+            name: 'new name',
+            description: 'new description',
+            websiteUrl: 'www.website.io',
+        };
+
+        await request(app)
+            .put(`/blogs/${blog.id}`)
+            .send(bodyForUpdate)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.NO_CONTENT_SUCCESS_204);
+
+        // If the inputModel has incorrect values
+        const badPutBody = {
+            ...bodyForUpdate,
+            websiteUrl: badInputModelField,
+        };
+
+        await request(app)
+            .put(`/blogs/${blog.id}`)
+            .send(badPutBody)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.BAD_REQUEST_400);
+
+        // If unauthorized
+        await request(app)
+            .put(`/blogs/${blog.id}`)
+            .send(bodyForUpdate)
+            .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401);
+
+        // If fake id
+        await request(app)
+            .put(`/blogs/fakeId`)
+            .send(bodyForUpdate)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.NOT_FOUND_404);
+    });
+
+    // Delete blog specified by id
+    it('Delete blog specified by id', async () => {
+        // If unauthorized
+        await request(app)
+            .delete(`/blogs/${blog.id}`)
+            .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401);
+
+        // delete should be success
+        await request(app)
+            .delete(`/blogs/${blog.id}`)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.NO_CONTENT_SUCCESS_204);
+
+        // If fake id
+        await request(app)
+            .delete('/blogs/fakeId')
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.NOT_FOUND_404);
     });
 });
 

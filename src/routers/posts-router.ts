@@ -46,7 +46,7 @@ postsRouter.post(
         if (newPost) {
             res.status(201).send(newPost);
         } else {
-            res.send(500);
+            res.sendStatus(500);
         }
     },
 );
@@ -67,9 +67,9 @@ postsRouter.put(
         );
 
         if (isUpdated) {
-            res.send(204);
+            res.sendStatus(204);
         } else {
-            res.send(404);
+            res.sendStatus(404);
         }
     },
 );
@@ -82,7 +82,7 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
     if (postById) {
         res.send(postById);
     } else {
-        res.send(404);
+        res.sendStatus(404);
     }
 });
 
@@ -95,9 +95,9 @@ postsRouter.delete(
         );
 
         if (isDeleted) {
-            res.send(204);
+            res.sendStatus(204);
         } else {
-            res.send(404);
+            res.sendStatus(404);
         }
     },
 );

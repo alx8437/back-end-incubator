@@ -78,7 +78,7 @@ export const authorizeMiddleware = (
 
     const isAuthorize = checkAuthorization(headers);
     if (!isAuthorize) {
-        res.send(401);
+        res.sendStatus(401);
         return;
     }
 
