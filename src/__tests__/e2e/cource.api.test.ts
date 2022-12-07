@@ -437,7 +437,6 @@ describe('Users API', () => {
             .query(queryParams)
             .set(authorizationData)
             .expect(HTTP_STATUS_CODES.SUCCESS_200);
-        console.log(usersResponse.body);
 
         expect(Array.isArray(usersResponse.body.items)).toBeTruthy();
 
