@@ -1,14 +1,11 @@
 import request from 'supertest';
-
-import {
-    GetItemsPayload,
-    QueryParams,
-} from '../../repositories/QueryRepositories/blogsQueryRepository';
 import { Post } from '../../services/posts-service';
 import { Blog } from '../../services/blogs-service';
 import { app, HTTP_STATUS_CODES } from '../../index';
+import { User } from '../../services/user-service';
+import { GetItemsPayload, TQueryParams } from '../../repositories/types';
 
-const queryParams: QueryParams = {
+const queryParams: TQueryParams = {
     pageNumber: 1,
     pageSize: 10,
     sortBy: 'createdAt',
@@ -21,10 +18,11 @@ const badInputModelField =
     'maxLengthMoreThen30symbols_Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the';
 
 // Blogs
-describe('Remove all data before run tests', () => {
+describe('Blogs API', () => {
     let blog: Blog;
     let post: Post;
 
+    // Clear all data
     beforeAll(async () => {
         await request(app)
             .delete('/testing/all-data')
@@ -231,15 +229,19 @@ describe('Remove all data before run tests', () => {
 });
 
 // Posts
-describe('Remove all data before run tests', () => {
+describe('Posts API', () => {
     let blog: Blog;
     let post: Post;
+
+    // Clear all data
     beforeAll(async () => {
         await request(app)
             .delete('/testing/all-data')
             .expect(HTTP_STATUS_CODES.NO_CONTENT_SUCCESS_204);
+    });
 
-        // create blog for posts
+    // Create blog for posts
+    it('create blog for posts', async () => {
         const blogBody = {
             name: 'New blog',
             description: 'The best blog',
@@ -380,6 +382,136 @@ describe('Remove all data before run tests', () => {
         // should get success remove post
         await request(app)
             .delete(`/posts/${post.id}`)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.NO_CONTENT_SUCCESS_204);
+    });
+});
+
+// Users
+describe('Users API', () => {
+    let user: User;
+    // Clear all data
+    beforeAll(async () => {
+        await request(app)
+            .delete('/testing/all-data')
+            .expect(HTTP_STATUS_CODES.NO_CONTENT_SUCCESS_204);
+    });
+
+    // Add new user to the system
+    it('Add new user to the system', async () => {
+        const userBody = {
+            login: 'login',
+            password: 'qwerty',
+            email: 'email@email.com',
+        };
+
+        // If unauthorized
+        await request(app)
+            .post('/users')
+            .send(userBody)
+            .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401);
+
+        // If bad request
+        const badUserBody = { ...userBody, email: badInputModelField };
+        await request(app)
+            .post('/users')
+            .set(authorizationData)
+            .send(badUserBody)
+            .expect(HTTP_STATUS_CODES.BAD_REQUEST_400);
+
+        // Success response
+        const userRequest = await request(app)
+            .post('/users')
+            .set(authorizationData)
+            .send(userBody)
+            .expect(HTTP_STATUS_CODES.SUCCESS_CREATED_201);
+        user = userRequest.body;
+
+        expect(typeof userRequest.body.createdAt).toBe('string');
+    });
+
+    // Returns all users
+    it('Returns all users', async () => {
+        const usersResponse = await request(app)
+            .get('/users')
+            .query(queryParams)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.SUCCESS_200);
+        console.log(usersResponse.body);
+
+        expect(Array.isArray(usersResponse.body.items)).toBeTruthy();
+
+        // If unauthorized
+        await request(app)
+            .get('/users')
+            .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401);
+
+        // Create user for test
+        const userBody = {
+            login: 'Vasiliy',
+            password: 'qwerty',
+            email: 'vasiliy@email.com',
+        };
+        console.log(userBody);
+
+        await request(app)
+            .post('/users')
+            .set(authorizationData)
+            .send(userBody)
+            .expect(HTTP_STATUS_CODES.SUCCESS_CREATED_201);
+
+        // Should return two users
+        const getRequest = await request(app)
+            .get('/users')
+            .set(authorizationData)
+            .query(queryParams)
+            .expect(HTTP_STATUS_CODES.SUCCESS_200);
+
+        expect(getRequest.body.items.length).toBe(2);
+
+        // Find user
+
+        // Find by name
+        const queryForLoginSearch: TQueryParams = {
+            ...queryParams,
+            searchLoginTerm: 'Vas',
+        };
+
+        const userByLogin = await request(app)
+            .get('/users')
+            .query(queryForLoginSearch)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.SUCCESS_200);
+
+        expect(userByLogin.body.items[0].login).toBe(userBody.login);
+        expect(userByLogin.body.items.length).toBe(1);
+
+        // Find by email
+        const queryForEmailSearch: TQueryParams = {
+            ...queryParams,
+            searchEmailTerm: 'sil',
+        };
+
+        const userByEmail = await request(app)
+            .get('/users')
+            .query(queryForEmailSearch)
+            .set(authorizationData)
+            .expect(HTTP_STATUS_CODES.SUCCESS_200);
+
+        expect(userByEmail.body.items[0].email).toBe(userBody.email);
+        expect(userByEmail.body.items.length).toBe(1);
+    });
+
+    // Delete user by Id
+    it('Should delete user by id from params', async () => {
+        // if not authorized
+        await request(app)
+            .delete(`/users/${user.id}`)
+            .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401);
+
+        // should remove success
+        await request(app)
+            .delete(`/users/${user.id}`)
             .set(authorizationData)
             .expect(HTTP_STATUS_CODES.NO_CONTENT_SUCCESS_204);
     });

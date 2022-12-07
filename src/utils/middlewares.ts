@@ -59,7 +59,7 @@ export const websiteUrlValidateMiddleware = body('websiteUrl')
     .isURL()
     .isLength({ max: 100 });
 
-export const loginOrEmailValidateMiddleware = body('login')
+export const loginValidateMiddleware = body('login')
     .trim()
     .isLength({ min: 3, max: 10 });
 

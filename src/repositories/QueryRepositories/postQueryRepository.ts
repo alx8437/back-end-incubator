@@ -1,8 +1,8 @@
 import { Post } from '../../services/posts-service';
 import { DeleteResult, WithId } from 'mongodb';
 import { postsCollection } from '../db';
-import { GetItemsPayload, QueryParamsTypes } from './blogsQueryRepository';
 import { getPageCount, getSkipCount } from '../../utils';
+import { GetItemsPayload, TQueryParamsTypes } from '../types';
 
 export const postQueryRepository = {
     async getPostById(id: string): Promise<Promise<Post> | null> {
@@ -21,7 +21,7 @@ export const postQueryRepository = {
     },
 
     async getPosts(
-        queryParams: QueryParamsTypes,
+        queryParams: TQueryParamsTypes,
     ): Promise<GetItemsPayload<Post>> {
         const { sortBy, pageNumber, pageSize, sortDirection } = queryParams;
 

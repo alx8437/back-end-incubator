@@ -9,28 +9,33 @@ import {
     websiteUrlValidateMiddleware,
 } from '../utils/middlewares';
 import { Blog, blogsService } from '../services/blogs-service';
-import {
-    blogsQueryRepository,
-    GetItemsPayload,
-} from '../repositories/QueryRepositories/blogsQueryRepository';
 import { Post, postsService } from '../services/posts-service';
-import { query } from 'express-validator';
 import { getQueryParams } from '../utils';
+import {
+    pageNumberSanitizer,
+    pageSizeSanitizer,
+    searchNameTermSanitizer,
+    sortBySanitizer,
+    sortDirectionSanitizer,
+} from '../utils/sanitizers';
+import { blogsQueryRepository } from '../repositories/QueryRepositories/blogsQueryRepository';
+import { GetItemsPayload } from '../repositories/types';
+import { blogsRepository } from '../repositories/blogs-repository';
 
 export const blogsRouter = Router({});
 
 blogsRouter.get(
     '/',
-    query('pageNumber').toInt().default(1),
-    query('pageSize').toInt().default(10),
-    query('searchNameTerm').default(''),
-    query('sortBy').default('createdAt'),
-    query('sortDirection').default('desc'),
+    pageNumberSanitizer,
+    pageSizeSanitizer,
+    searchNameTermSanitizer,
+    sortBySanitizer,
+    sortDirectionSanitizer,
     async (req: Request, res: Response) => {
         const { queryParams } = getQueryParams(req);
 
         const result = await blogsQueryRepository.getAllBloggers(queryParams);
-        res.send(result);
+        res.status(200).send(result);
     },
 );
 
@@ -96,11 +101,11 @@ blogsRouter.get('/:id', async (req: Request, res: Response) => {
 
 blogsRouter.get(
     '/:id/posts',
-    query('pageNumber').toInt().default(1),
-    query('pageSize').toInt().default(10),
-    query('searchNameTerm').default(''),
-    query('sortBy').default('createdAt'),
-    query('sortDirection').default('desc'),
+    pageNumberSanitizer,
+    pageSizeSanitizer,
+    searchNameTermSanitizer,
+    sortBySanitizer,
+    sortDirectionSanitizer,
     async (req: Request, res: Response) => {
         const { queryParams, id } = getQueryParams(req);
 
@@ -140,13 +145,18 @@ blogsRouter.put(
     },
 );
 
-blogsRouter.delete('/:id', authorizeMiddleware, async (req, res) => {
-    const isDeleted: boolean = await blogsQueryRepository.deleteBlogger(
-        req.params.id,
-    );
-    if (isDeleted) {
-        res.sendStatus(204);
-    } else {
-        res.sendStatus(404);
-    }
-});
+blogsRouter.delete(
+    '/:id',
+    authorizeMiddleware,
+    // should be last
+    errorMiddleWare,
+    async (req, res) => {
+        const { id } = getQueryParams(req);
+        const isDeleted: boolean = await blogsRepository.deleteBlogger(id);
+        if (isDeleted) {
+            res.sendStatus(204);
+        } else {
+            res.sendStatus(404);
+        }
+    },
+);

@@ -1,10 +1,10 @@
-import { ObjectId } from 'mongodb';
+import { DeleteResult, ObjectId } from 'mongodb';
 import { usersCollection } from './db';
 
 export type TUserDBType = {
     _id: ObjectId;
     id: string;
-    loginOrEmail: string;
+    login: string;
     email: string;
     createdAt: string;
     passwordHash: string;
@@ -16,5 +16,11 @@ export const userRepository = {
         const result = await usersCollection.insertOne(user);
 
         return result.acknowledged;
+    },
+
+    async deleteUserById(id: string): Promise<boolean> {
+        const result: DeleteResult = await usersCollection.deleteOne({ id });
+
+        return result.deletedCount === 1;
     },
 };

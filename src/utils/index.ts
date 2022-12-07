@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { QueryParamsTypes } from '../repositories/QueryRepositories/blogsQueryRepository';
+import { TQueryParamsTypes } from '../repositories/types';
 
 export const removeProperty = (object: any, property: string): Object => {
     const properties: string[] = Object.getOwnPropertyNames(object);
@@ -21,6 +21,6 @@ export const getPageCount = (itemCount: number, pageSize: number) => {
 
 export const getQueryParams = (req: Request) => {
     const { id } = req.params;
-    const queryParams = req.query as QueryParamsTypes;
+    const queryParams = req.query as TQueryParamsTypes;
     return { id, queryParams };
 };

@@ -22,7 +22,7 @@
         "dev": "yarn nodemon --inspect dist/index.js",
         "build": "tsc",
         "start": "node dist/index.js",
-        "test": "jest"
+        "test": "jest --verbose --coverage --forceExit --watchAll --maxWorkers=1"
     },
     "devDependencies": {
         "@types/cors": "^2.8.12",

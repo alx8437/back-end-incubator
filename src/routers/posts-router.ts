@@ -9,19 +9,25 @@ import {
 } from '../utils/middlewares';
 import { Post, postsService } from '../services/posts-service';
 import { postQueryRepository } from '../repositories/QueryRepositories/postQueryRepository';
-import { GetItemsPayload } from '../repositories/QueryRepositories/blogsQueryRepository';
-import { query } from 'express-validator';
 import { getQueryParams } from '../utils';
+import {
+    pageNumberSanitizer,
+    pageSizeSanitizer,
+    searchNameTermSanitizer,
+    sortBySanitizer,
+    sortDirectionSanitizer,
+} from '../utils/sanitizers';
+import { GetItemsPayload } from '../repositories/types';
 
 export const postsRouter = Router({});
 
 postsRouter.get(
     '/',
-    query('pageNumber').toInt().default(1),
-    query('pageSize').toInt().default(10),
-    query('searchNameTerm').default(''),
-    query('sortBy').default('createdAt'),
-    query('sortDirection').default('desc'),
+    pageNumberSanitizer,
+    pageSizeSanitizer,
+    searchNameTermSanitizer,
+    sortBySanitizer,
+    sortDirectionSanitizer,
     async (req: Request, res: Response) => {
         const { queryParams } = getQueryParams(req);
 

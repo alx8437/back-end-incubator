@@ -1,5 +1,5 @@
 import { blogsCollection } from './db';
-import { DeleteResult, InsertOneResult, UpdateResult, WithId } from 'mongodb';
+import { DeleteResult, InsertOneResult, UpdateResult } from 'mongodb';
 import { Blog } from '../services/blogs-service';
 
 export const blogsRepository = {
@@ -20,5 +20,11 @@ export const blogsRepository = {
         );
 
         return result.matchedCount === 1;
+    },
+
+    async deleteBlogger(id: string): Promise<boolean> {
+        const result: DeleteResult = await blogsCollection.deleteOne({ id });
+
+        return result.deletedCount === 1;
     },
 };

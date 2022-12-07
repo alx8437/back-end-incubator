@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb';
 
 export type User = {
     id: string;
-    loginOrEmail: string;
+    login: string;
     email: string;
     createdAt: string;
 };
@@ -13,7 +13,7 @@ export const userService = {
     async createUser(
         email: string,
         password: string,
-        loginOrEmail: string,
+        login: string,
     ): Promise<User | null> {
         const passwordSalt: string = await bcrypt.genSalt(10);
         const passwordHash = await this._getPasswordHash(
@@ -24,7 +24,7 @@ export const userService = {
         const newUser: TUserDBType = {
             _id: new ObjectId(),
             id: Number(new Date()).toString(),
-            loginOrEmail,
+            login,
             email,
             createdAt: new Date().toISOString(),
             passwordHash,
@@ -34,8 +34,8 @@ export const userService = {
         const result = await userRepository.createUser(newUser);
 
         if (result) {
-            const { id, loginOrEmail, email, createdAt } = newUser;
-            return { id, loginOrEmail, email, createdAt } as User;
+            const { id, login, email, createdAt } = newUser;
+            return { id, login, email, createdAt } as User;
         } else {
             return null;
         }
