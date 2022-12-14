@@ -14,9 +14,7 @@ if (!mongoURI) {
 const client = new MongoClient(mongoURI);
 
 export const blogsCollection = client.db().collection<Blog>('blogs');
-
 export const postsCollection = client.db().collection<Post>('posts');
-
 export const usersCollection = client
     .db('inc-users')
     .collection<TUserDBType>('users');
