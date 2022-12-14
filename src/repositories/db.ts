@@ -2,9 +2,14 @@ import { MongoClient } from 'mongodb';
 import { Blog } from '../services/blogs-service';
 import { Post } from '../services/posts-service';
 import { TUserDBType } from './user-repository';
+import * as dotenv from 'dotenv';
 
-const mongoURI =
-    'mongodb+srv://adminDB:ev4cksvqtz2TBfS@back-incubator.ejcpbvl.mongodb.net/incubator?retryWrites=true&w=majority';
+dotenv.config();
+const mongoURI = process.env.MONGO_URL;
+
+if (!mongoURI) {
+    throw new Error('url is not found');
+}
 
 const client = new MongoClient(mongoURI);
 
