@@ -63,6 +63,17 @@ export const loginValidateMiddleware = body('login')
     .trim()
     .isLength({ min: 3, max: 10 });
 
+export const loginOrEmailValidateMiddleware = body('loginOrEmail')
+    .trim()
+    .custom((value) => {
+        if (value.isURL() || value.isLength({ min: 3, max: 10 })) {
+            return true;
+        }
+        return false;
+    });
+// .trim()
+// .isLength({ min: 3, max: 10 });
+
 export const passwordValidateMiddleware = body('password')
     .trim()
     .isLength({ min: 6, max: 20 });

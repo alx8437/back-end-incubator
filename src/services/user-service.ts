@@ -40,6 +40,17 @@ export const userService = {
             return null;
         }
     },
+    async checkCredentials(
+        loginOrEmail: string,
+        password: string,
+    ): Promise<boolean> {
+        const user: TUserDBType | null =
+            await userRepository.findUserByLoginOrMail(loginOrEmail);
+
+        if (!user) return false;
+        const hash = await this._getPasswordHash(password, user.passwordSalt);
+        return hash === user.passwordHash;
+    },
     async _getPasswordHash(password: string, salt: string) {
         const hash: string = await bcrypt.hash(password, salt);
         return hash;

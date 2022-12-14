@@ -1,4 +1,4 @@
-import { DeleteResult, ObjectId } from 'mongodb';
+import { DeleteResult, ObjectId, WithId } from 'mongodb';
 import { usersCollection } from './db';
 
 export type TUserDBType = {
@@ -22,5 +22,23 @@ export const userRepository = {
         const result: DeleteResult = await usersCollection.deleteOne({ id });
 
         return result.deletedCount === 1;
+    },
+
+    async findUserByLoginOrMail(
+        loginOrMail: string,
+    ): Promise<TUserDBType | null> {
+        const filter = {
+            $or: [{ login: loginOrMail }, { email: loginOrMail }],
+        };
+
+        const user: WithId<TUserDBType> | null = await usersCollection.findOne(
+            filter,
+        );
+
+        if (user) {
+            return user;
+        } else {
+            return null;
+        }
     },
 };

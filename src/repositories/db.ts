@@ -4,19 +4,17 @@ import { Post } from '../services/posts-service';
 import { TUserDBType } from './user-repository';
 
 const mongoURI =
-    process.env.mongoURI ||
-    'mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.5.3';
+    'mongodb+srv://adminDB:ev4cksvqtz2TBfS@back-incubator.ejcpbvl.mongodb.net/incubator?retryWrites=true&w=majority';
 
 const client = new MongoClient(mongoURI);
 
-const DATA_BASE_BLOGGER = client.db('blogs');
+export const blogsCollection = client.db().collection<Blog>('blogs');
 
-export const blogsCollection = DATA_BASE_BLOGGER.collection<Blog>('blogs');
+export const postsCollection = client.db().collection<Post>('posts');
 
-export const postsCollection = DATA_BASE_BLOGGER.collection<Post>('posts');
-
-export const usersCollection =
-    DATA_BASE_BLOGGER.collection<TUserDBType>('users');
+export const usersCollection = client
+    .db('inc-users')
+    .collection<TUserDBType>('users');
 
 export async function runDB() {
     // Connect the client to the server

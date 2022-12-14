@@ -515,3 +515,42 @@ describe('Users API', () => {
             .expect(HTTP_STATUS_CODES.NO_CONTENT_SUCCESS_204);
     });
 });
+
+// Auth
+describe('Should be make authorization', () => {
+    let user: User;
+    // Clear all data
+    beforeAll(async () => {
+        await request(app)
+            .delete('/testing/all-data')
+            .expect(HTTP_STATUS_CODES.NO_CONTENT_SUCCESS_204);
+    });
+
+    // Creating user for test authorization
+    it('Creating user for test authorization', async () => {
+        const userBody = {
+            login: 'login',
+            password: 'qwerty',
+            email: 'email@email.com',
+        };
+
+        const userRequest = await request(app)
+            .post('/users')
+            .set(authorizationData)
+            .send(userBody)
+            .expect(HTTP_STATUS_CODES.SUCCESS_CREATED_201);
+        user = userRequest.body;
+    });
+
+    // Authorization process
+    it('Authorization process', async () => {
+        const authorizationData = {
+            loginOrEmail: user.login,
+            password: 'qwerty',
+        };
+        await request(app)
+            .post('/auth/login')
+            .send(authorizationData)
+            .expect(HTTP_STATUS_CODES.NO_CONTENT_SUCCESS_204);
+    });
+});
