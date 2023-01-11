@@ -1,6 +1,5 @@
 import { postDBRepository } from '../repositories/posts-repository';
-import { blogsService } from './blogs-service';
-import { removeProperty } from '../utils';
+import { removeProperties } from '../utils';
 import { blogsQueryRepository } from '../repositories/QueryRepositories/blogsQueryRepository';
 
 export type Post = {
@@ -37,7 +36,7 @@ export const postsService = {
         };
 
         const isCreated: boolean = await postDBRepository.createPost(newPost);
-        const postWithoutBaseId = removeProperty(newPost, '_id') as Post;
+        const postWithoutBaseId = removeProperties(newPost, ['_id']) as Post;
 
         return isCreated ? postWithoutBaseId : null;
     },

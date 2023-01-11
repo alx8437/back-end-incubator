@@ -41,4 +41,12 @@ export const userRepository = {
             return null;
         }
     },
+
+    async findUserById(id: string): Promise<TUserDBType | null> {
+        const user = await usersCollection.findOne({ id });
+        if (!user) {
+            return null;
+        }
+        return user;
+    },
 };

@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import {
-    authorizeMiddleware,
+    basicAuthorizeMiddleware,
     emailValidateMiddleware,
     errorMiddleWare,
     loginValidateMiddleware,
@@ -27,7 +27,7 @@ export const usersRouter = Router({});
 
 usersRouter.post(
     '/',
-    authorizeMiddleware,
+    basicAuthorizeMiddleware,
     loginValidateMiddleware,
     passwordValidateMiddleware,
     emailValidateMiddleware,
@@ -45,7 +45,7 @@ usersRouter.post(
 
 usersRouter.get(
     '/',
-    authorizeMiddleware,
+    basicAuthorizeMiddleware,
     pageNumberSanitizer,
     pageSizeSanitizer,
     sortBySanitizer,
@@ -63,7 +63,7 @@ usersRouter.get(
 
 usersRouter.delete(
     '/:id',
-    authorizeMiddleware,
+    basicAuthorizeMiddleware,
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {

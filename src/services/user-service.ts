@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { TUserDBType, userRepository } from '../repositories/user-repository';
 import { ObjectId } from 'mongodb';
+import { removeProperties } from '../utils';
 
 export type User = {
     id: string;
@@ -34,8 +35,11 @@ export const userService = {
         const result = await userRepository.createUser(newUser);
 
         if (result) {
-            const { id, login, email, createdAt } = newUser;
-            return { id, login, email, createdAt } as User;
+            return removeProperties(newUser, [
+                '_id',
+                'passwordHash',
+                'passwordSalt',
+            ]) as User;
         } else {
             return null;
         }
@@ -43,13 +47,21 @@ export const userService = {
     async checkCredentials(
         loginOrEmail: string,
         password: string,
-    ): Promise<boolean> {
+    ): Promise<User | null> {
         const user: TUserDBType | null =
             await userRepository.findUserByLoginOrMail(loginOrEmail);
 
-        if (!user) return false;
+        if (!user) {
+            return null;
+        }
+
         const hash = await this._getPasswordHash(password, user.passwordSalt);
-        return hash === user.passwordHash;
+
+        if (hash === user.passwordHash) {
+            return user;
+        }
+
+        return null;
     },
     async _getPasswordHash(password: string, salt: string) {
         const hash: string = await bcrypt.hash(password, salt);

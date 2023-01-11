@@ -1,13 +1,15 @@
 import { Request } from 'express';
 import { TQueryParamsTypes } from '../repositories/types';
 
-export const removeProperty = (object: any, property: string): Object => {
+export const removeProperties = (object: any, remove: string[]): Object => {
     const properties: string[] = Object.getOwnPropertyNames(object);
-    const isInclude = properties.includes(property);
-    if (isInclude) {
-        delete object[property];
-        return object;
-    }
+    remove.forEach((field) => {
+        const isInclude = properties.includes(field);
+        if (isInclude) {
+            delete object[field];
+        }
+    });
+
     return object;
 };
 

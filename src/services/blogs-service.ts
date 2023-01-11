@@ -1,5 +1,5 @@
 import { blogsRepository } from '../repositories/blogs-repository';
-import { removeProperty } from '../utils';
+import { removeProperties } from '../utils';
 
 export type Blog = {
     id: string;
@@ -25,7 +25,7 @@ export const blogsService = {
 
         const isCreated = await blogsRepository.createBlogger(newBlog);
 
-        const blogWithoutBaseId = removeProperty(newBlog, '_id') as Blog;
+        const blogWithoutBaseId = removeProperties(newBlog, ['_id']) as Blog;
 
         return isCreated ? blogWithoutBaseId : null;
     },

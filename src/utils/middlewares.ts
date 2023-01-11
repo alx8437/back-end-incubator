@@ -1,10 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
 import { body, Result, validationResult } from 'express-validator';
 import { getErrorMessage, TError } from './errors';
-import { blogsCollection } from '../repositories/db';
+import { blogsCollection, postsCollection } from '../repositories/db';
 import { WithId } from 'mongodb';
-import { checkAuthorization } from './authorization';
+import { checkBasicAuthorization } from './authorization';
 import { Blog } from '../services/blogs-service';
+import { Post } from '../services/posts-service';
+import { HTTP_STATUS_CODES } from '../index';
+import { jwtService } from './jwt-service';
+import { userRepository } from '../repositories/user-repository';
 
 export const errorMiddleWare = (
     req: Request,
@@ -50,6 +54,21 @@ export const isCorrectBlogIdMiddleware = body('blogId').custom(
     },
 );
 
+export const isCorrectPostIdMiddleware = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    const post: WithId<Post> | null = await postsCollection.findOne({
+        id: req.params.id,
+    });
+    if (!post) {
+        res.sendStatus(404);
+    } else {
+        next();
+    }
+};
+
 export const blogNameValidateMiddleware = body('name')
     .trim()
     .isLength({ min: 1, max: 15 });
@@ -63,35 +82,54 @@ export const loginValidateMiddleware = body('login')
     .trim()
     .isLength({ min: 3, max: 10 });
 
-export const loginOrEmailValidateMiddleware = body('loginOrEmail')
-    .trim()
-    .custom((value) => {
-        if (value.isURL() || value.isLength({ min: 3, max: 10 })) {
-            return true;
-        }
-        return false;
-    });
-// .trim()
-// .isLength({ min: 3, max: 10 });
-
 export const passwordValidateMiddleware = body('password')
     .trim()
     .isLength({ min: 6, max: 20 });
 
 export const emailValidateMiddleware = body('email').isEmail();
 
-export const authorizeMiddleware = (
+export const basicAuthorizeMiddleware = (
     req: Request,
     res: Response,
     next: NextFunction,
 ) => {
     const { headers } = req;
 
-    const isAuthorize = checkAuthorization(headers);
+    const isAuthorize = checkBasicAuthorization(headers);
     if (!isAuthorize) {
-        res.sendStatus(401);
+        res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED_401);
         return;
     }
 
     next();
+};
+
+export const commentValidateMiddleware = body('content')
+    .trim()
+    .isLength({ min: 20, max: 300 });
+
+export const bearerAuthMiddleware = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    if (!req.headers.authorization) {
+        res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED_401);
+
+        return;
+    }
+
+    const token = req.headers.authorization.split(' ')[1];
+    const userId = jwtService.getUserIdByToken(token);
+    if (userId) {
+        const user = await userRepository.findUserById(userId);
+        if (user) {
+            req.user = user;
+            next();
+            return;
+        } else {
+            res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED_401);
+        }
+    }
+    res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED_401);
 };

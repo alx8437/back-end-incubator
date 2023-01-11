@@ -1,9 +1,12 @@
 import { Request, Response, Router } from 'express';
 import {
-    authorizeMiddleware,
+    basicAuthorizeMiddleware,
+    bearerAuthMiddleware,
+    commentValidateMiddleware,
     contentValidateMiddleware,
     errorMiddleWare,
     isCorrectBlogIdMiddleware,
+    isCorrectPostIdMiddleware,
     shortDescriptionValidateMiddleware,
     titleValidateMiddleware,
 } from '../utils/middlewares';
@@ -18,6 +21,9 @@ import {
     sortDirectionSanitizer,
 } from '../utils/sanitizers';
 import { GetItemsPayload } from '../repositories/types';
+import { commentsQueryRepository } from '../repositories/QueryRepositories/commentsQueryRepository';
+import { commentsService, TComment } from '../services/comments-service';
+import { HTTP_STATUS_CODES } from '../index';
 
 export const postsRouter = Router({});
 
@@ -37,9 +43,27 @@ postsRouter.get(
     },
 );
 
+// Get comments
+postsRouter.get(
+    '/:id/comments',
+    pageNumberSanitizer,
+    pageSizeSanitizer,
+    sortBySanitizer,
+    sortDirectionSanitizer,
+    isCorrectPostIdMiddleware,
+    // should be last
+    errorMiddleWare,
+    async (req: Request, res: Response) => {
+        const comments = commentsQueryRepository.getCommentsByPostId(
+            req.params.id,
+        );
+    },
+);
+
+// Post post
 postsRouter.post(
     '/',
-    authorizeMiddleware,
+    basicAuthorizeMiddleware,
     titleValidateMiddleware,
     shortDescriptionValidateMiddleware,
     contentValidateMiddleware,
@@ -57,9 +81,30 @@ postsRouter.post(
     },
 );
 
+// Post comment
+postsRouter.post(
+    '/:id/comments',
+    isCorrectPostIdMiddleware,
+    bearerAuthMiddleware,
+    commentValidateMiddleware,
+    // should be last
+    errorMiddleWare,
+    async (req: Request, res: Response) => {
+        const { id } = getQueryParams(req);
+        const comment: TComment | null = await commentsService.createComment(
+            req.user,
+            req.body,
+            id,
+        );
+        if (comment) {
+            res.status(HTTP_STATUS_CODES.SUCCESS_CREATED_201).send(comment);
+        }
+    },
+);
+
 postsRouter.put(
     '/:id',
-    authorizeMiddleware,
+    basicAuthorizeMiddleware,
     titleValidateMiddleware,
     shortDescriptionValidateMiddleware,
     contentValidateMiddleware,
@@ -94,7 +139,7 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
 
 postsRouter.delete(
     '/:id',
-    authorizeMiddleware,
+    basicAuthorizeMiddleware,
     async (req: Request, res: Response) => {
         const isDeleted: boolean = await postQueryRepository.deletePostById(
             req.params.id,

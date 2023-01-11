@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import {
-    authorizeMiddleware,
+    basicAuthorizeMiddleware,
     blogNameValidateMiddleware,
     contentValidateMiddleware,
     errorMiddleWare,
@@ -39,9 +39,10 @@ blogsRouter.get(
     },
 );
 
+// Post blog
 blogsRouter.post(
     '/',
-    authorizeMiddleware,
+    basicAuthorizeMiddleware,
     blogNameValidateMiddleware,
     websiteUrlValidateMiddleware,
     // should be last
@@ -61,9 +62,10 @@ blogsRouter.post(
     },
 );
 
+// Post post
 blogsRouter.post(
     '/:id/posts',
-    authorizeMiddleware,
+    basicAuthorizeMiddleware,
     titleValidateMiddleware,
     shortDescriptionValidateMiddleware,
     contentValidateMiddleware,
@@ -126,7 +128,7 @@ blogsRouter.get(
 
 blogsRouter.put(
     '/:id',
-    authorizeMiddleware,
+    basicAuthorizeMiddleware,
     blogNameValidateMiddleware,
     websiteUrlValidateMiddleware,
     errorMiddleWare,
@@ -147,7 +149,7 @@ blogsRouter.put(
 
 blogsRouter.delete(
     '/:id',
-    authorizeMiddleware,
+    basicAuthorizeMiddleware,
     // should be last
     errorMiddleWare,
     async (req, res) => {
