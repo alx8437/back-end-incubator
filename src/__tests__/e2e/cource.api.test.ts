@@ -686,16 +686,52 @@ describe('Comments API', () => {
         });
     });
 
-    // Create new comment for post
+    // Create new comment for post success
     it('Should create new comment for post', async () => {
         const body = {
             content: 'content for comment should be minimum 20 symbols',
         };
-        const response = await request(app)
+        await request(app)
             .post(`/posts/${post.id}/comments`)
             .auth(token, { type: 'bearer' })
             .send(body)
-            .expect(HTTP_STATUS_CODES.SUCCESS_200);
-        console.log(response.body);
+            .expect(HTTP_STATUS_CODES.SUCCESS_CREATED_201);
+    });
+
+    // Should return error due to length content
+    it('Should return error due to length content', async () => {
+        const body = {
+            content: 'few letters',
+        };
+        await request(app)
+            .post(`/posts/${post.id}/comments`)
+            .auth(token, { type: 'bearer' })
+            .send(body)
+            .expect(HTTP_STATUS_CODES.BAD_REQUEST_400);
+    });
+
+    // Not content if post with specified postId doesn't exist
+    it('Should return error due to length content', async () => {
+        const body = {
+            content: 'few letters',
+        };
+        await request(app)
+            .post(`/posts/${post.id}/comments`)
+            .auth(token, { type: 'bearer' })
+            .send(body)
+            .expect(HTTP_STATUS_CODES.BAD_REQUEST_400);
+    });
+
+    // Should return unauthorized error
+    it('Should return error due to length content', async () => {
+        const body = {
+            content: 'few letters',
+        };
+
+        await request(app)
+            .post(`/posts/${post.id}/comments`)
+            .auth('faKetoken12312ad21ed!@3323', { type: 'bearer' })
+            .send(body)
+            .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401);
     });
 });

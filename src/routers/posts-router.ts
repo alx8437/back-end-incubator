@@ -102,6 +102,7 @@ postsRouter.post(
     },
 );
 
+// Put post
 postsRouter.put(
     '/:id',
     basicAuthorizeMiddleware,
@@ -125,6 +126,7 @@ postsRouter.put(
     },
 );
 
+// Get post by id
 postsRouter.get('/:id', async (req: Request, res: Response) => {
     const postById: Post | null = await postQueryRepository.getPostById(
         req.params.id,
@@ -137,6 +139,7 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
     }
 });
 
+// Delete post by Id
 postsRouter.delete(
     '/:id',
     basicAuthorizeMiddleware,
