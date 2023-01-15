@@ -18,9 +18,9 @@ import {
     sortBySanitizer,
     sortDirectionSanitizer,
 } from '../utils/sanitizers';
-import { blogsQueryRepository } from '../repositories/QueryRepositories/blogsQueryRepository';
 import { GetItemsPayload } from '../repositories/types';
 import { blogsRepository } from '../repositories/blogs-repository';
+import { blogsQueryRepository } from '../repositories/queryRepositories/blogsQueryRepository';
 
 export const blogsRouter = Router({});
 

@@ -18,7 +18,7 @@ import {
 import {
     TGetQueryUserPayload,
     userQueryRepository,
-} from '../repositories/QueryRepositories/userQueryRepository';
+} from '../repositories/queryRepositories/userQueryRepository';
 import { getQueryParams } from '../utils';
 import { userRepository } from '../repositories/user-repository';
 import { HTTP_STATUS_CODES } from '../index';

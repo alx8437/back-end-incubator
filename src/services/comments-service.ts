@@ -8,6 +8,7 @@ export type TComment = {
     userId: string;
     userLogin: string;
     createdAt: string;
+    postId?: string;
 };
 
 export const commentsService = {
@@ -23,6 +24,7 @@ export const commentsService = {
             userId: user.id,
             userLogin: user.login,
             createdAt: new Date().toISOString(),
+            postId: postId,
         };
 
         const isAdded: boolean = await commentDBRepository.addCommentByPostId(
@@ -31,9 +33,17 @@ export const commentsService = {
         );
 
         if (isAdded) {
-            return removeProperties(newComment, ['_id']) as TComment;
+            return removeProperties(newComment, ['_id', 'postId']) as TComment;
         } else {
             return null;
         }
+    },
+
+    async putCommentById(id: string, content: string): Promise<boolean> {
+        return await commentDBRepository.updateComment(id, content);
+    },
+
+    async deleteById(id: string): Promise<boolean> {
+        return await commentDBRepository.deleteComment(id);
     },
 };

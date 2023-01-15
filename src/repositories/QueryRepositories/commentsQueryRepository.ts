@@ -1,3 +1,33 @@
+import { commentsCollection, postsCollection } from '../db';
+import { getPageCount, getSkipCount } from '../../utils';
+import { GetItemsPayload, TQueryParamsTypes } from '../types';
+import { TComment } from '../../services/comments-service';
+
 export const commentsQueryRepository = {
-    async getCommentsByPostId(postId: string) {},
+    async getCommentsByPostId(
+        postId: string,
+        queryParams: TQueryParamsTypes,
+    ): Promise<GetItemsPayload<TComment>> {
+        const { pageNumber, pageSize, sortBy, sortDirection } = queryParams;
+
+        const skipCount = getSkipCount(pageNumber, pageSize);
+        const totalCount = await postsCollection.countDocuments();
+        const pagesCount = getPageCount(totalCount, pageSize);
+
+        const comments: TComment[] =
+            (await commentsCollection
+                .find({ postId }, { projection: { _id: 0, postId: 0 } })
+                .sort(sortBy, sortDirection)
+                .skip(skipCount)
+                .limit(pageSize)
+                .toArray()) || [];
+
+        return {
+            pageSize,
+            totalCount,
+            page: pageNumber,
+            items: comments,
+            pagesCount,
+        };
+    },
 };

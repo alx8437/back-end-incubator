@@ -11,7 +11,7 @@ import {
     titleValidateMiddleware,
 } from '../utils/middlewares';
 import { Post, postsService } from '../services/posts-service';
-import { postQueryRepository } from '../repositories/QueryRepositories/postQueryRepository';
+import { postQueryRepository } from '../repositories/queryRepositories/postQueryRepository';
 import { getQueryParams } from '../utils';
 import {
     pageNumberSanitizer,
@@ -21,12 +21,13 @@ import {
     sortDirectionSanitizer,
 } from '../utils/sanitizers';
 import { GetItemsPayload } from '../repositories/types';
-import { commentsQueryRepository } from '../repositories/QueryRepositories/commentsQueryRepository';
 import { commentsService, TComment } from '../services/comments-service';
 import { HTTP_STATUS_CODES } from '../index';
+import { commentsQueryRepository } from '../repositories/queryRepositories/commentsQueryRepository';
 
 export const postsRouter = Router({});
 
+// Get posts
 postsRouter.get(
     '/',
     pageNumberSanitizer,
@@ -40,23 +41,6 @@ postsRouter.get(
         const result: GetItemsPayload<Post> =
             await postQueryRepository.getPosts(queryParams);
         res.send(result);
-    },
-);
-
-// Get comments
-postsRouter.get(
-    '/:id/comments',
-    pageNumberSanitizer,
-    pageSizeSanitizer,
-    sortBySanitizer,
-    sortDirectionSanitizer,
-    isCorrectPostIdMiddleware,
-    // should be last
-    errorMiddleWare,
-    async (req: Request, res: Response) => {
-        const comments = commentsQueryRepository.getCommentsByPostId(
-            req.params.id,
-        );
     },
 );
 
@@ -77,27 +61,6 @@ postsRouter.post(
             res.status(201).send(newPost);
         } else {
             res.sendStatus(500);
-        }
-    },
-);
-
-// Post comment
-postsRouter.post(
-    '/:id/comments',
-    isCorrectPostIdMiddleware,
-    bearerAuthMiddleware,
-    commentValidateMiddleware,
-    // should be last
-    errorMiddleWare,
-    async (req: Request, res: Response) => {
-        const { id } = getQueryParams(req);
-        const comment: TComment | null = await commentsService.createComment(
-            req.user,
-            req.body,
-            id,
-        );
-        if (comment) {
-            res.status(HTTP_STATUS_CODES.SUCCESS_CREATED_201).send(comment);
         }
     },
 );
@@ -133,13 +96,13 @@ postsRouter.get('/:id', async (req: Request, res: Response) => {
     );
 
     if (postById) {
-        res.send(postById);
+        res.status(200).send(postById);
     } else {
         res.sendStatus(404);
     }
 });
 
-// Delete post by Id
+// Delete post by id
 postsRouter.delete(
     '/:id',
     basicAuthorizeMiddleware,
@@ -153,5 +116,49 @@ postsRouter.delete(
         } else {
             res.sendStatus(404);
         }
+    },
+);
+
+// Comments API
+// Post comment
+postsRouter.post(
+    '/:id/comments',
+    isCorrectPostIdMiddleware,
+    bearerAuthMiddleware,
+    commentValidateMiddleware,
+    // should be last
+    errorMiddleWare,
+    async (req: Request, res: Response) => {
+        const { id } = getQueryParams(req);
+        const comment: TComment | null = await commentsService.createComment(
+            req.user,
+            req.body,
+            id,
+        );
+        if (comment) {
+            res.status(HTTP_STATUS_CODES.SUCCESS_CREATED_201).send(comment);
+        } else {
+            res.sendStatus(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR_500);
+        }
+    },
+);
+
+// Get comments by postId
+postsRouter.get(
+    '/:id/comments',
+    pageNumberSanitizer,
+    pageSizeSanitizer,
+    sortBySanitizer,
+    sortDirectionSanitizer,
+    isCorrectPostIdMiddleware,
+    // should be last
+    errorMiddleWare,
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const { queryParams } = getQueryParams(req);
+        const response: GetItemsPayload<TComment> =
+            await commentsQueryRepository.getCommentsByPostId(id, queryParams);
+
+        res.status(200).send(response);
     },
 );

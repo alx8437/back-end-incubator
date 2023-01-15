@@ -18,7 +18,6 @@ type TAuthRequestBody = {
 authRouter.post(
     '/login',
     passwordValidateMiddleware,
-    //loginValidateMiddleware,
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {

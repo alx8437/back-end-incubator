@@ -29,6 +29,8 @@ export const HTTP_STATUS_CODES = {
     UNAUTHORIZED_401: 401,
     NOT_FOUND_404: 404,
     NO_CONTENT_SUCCESS_204: 204,
+    INTERNAL_SERVER_ERROR_500: 500,
+    FORBIDDEN_403: 403,
 };
 
 app.get('/', (req: Request, res: Response) => {

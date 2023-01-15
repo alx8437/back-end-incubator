@@ -1,6 +1,6 @@
 import { postDBRepository } from '../repositories/posts-repository';
 import { removeProperties } from '../utils';
-import { blogsQueryRepository } from '../repositories/QueryRepositories/blogsQueryRepository';
+import { blogsQueryRepository } from '../repositories/queryRepositories/blogsQueryRepository';
 
 export type Post = {
     id: string;
@@ -51,14 +51,12 @@ export const postsService = {
         },
     ): Promise<boolean> {
         const { content, blogId, title, shortDescription } = body;
-        const result: boolean = await postDBRepository.updatePost(
+        return await postDBRepository.updatePost(
             id,
             content,
             title,
             blogId,
             shortDescription,
         );
-
-        return result;
     },
 };

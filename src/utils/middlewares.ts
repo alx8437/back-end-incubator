@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { body, Result, validationResult } from 'express-validator';
 import { getErrorMessage, TError } from './errors';
-import { blogsCollection, postsCollection } from '../repositories/db';
+import {
+    blogsCollection,
+    commentsCollection,
+    postsCollection,
+} from '../repositories/db';
 import { WithId } from 'mongodb';
 import { checkBasicAuthorization } from './authorization';
 import { Blog } from '../services/blogs-service';
@@ -9,6 +13,7 @@ import { Post } from '../services/posts-service';
 import { HTTP_STATUS_CODES } from '../index';
 import { jwtService } from './jwt-service';
 import { userRepository } from '../repositories/user-repository';
+import { TComment } from '../services/comments-service';
 
 export const errorMiddleWare = (
     req: Request,
@@ -64,6 +69,37 @@ export const isCorrectPostIdMiddleware = async (
     });
     if (!post) {
         res.sendStatus(404);
+    } else {
+        next();
+    }
+};
+
+export const isCorrectCommentIdMiddleware = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    const comment: WithId<TComment> | null = await commentsCollection.findOne({
+        id: req.params.id,
+    });
+    if (!comment) {
+        res.sendStatus(404);
+    } else {
+        next();
+    }
+};
+
+export const isCorrectUserCommentMiddleware = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    const comment: WithId<TComment> | null = await commentsCollection.findOne({
+        id: req.params.id,
+    });
+
+    if (req.user.id !== comment?.userId) {
+        res.sendStatus(403);
     } else {
         next();
     }
