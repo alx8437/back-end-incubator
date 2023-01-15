@@ -8,14 +8,21 @@ import {
 } from '../utils/middlewares';
 import { commentsService } from '../services/comments-service';
 import { HTTP_STATUS_CODES } from '../index';
+import { commentsQueryRepository } from '../repositories/queryRepositories/commentsQueryRepository';
 
 export const commentsRouter = Router({});
 
 commentsRouter.get(
     '/:id',
-    bearerAuthMiddleware,
+    isCorrectCommentIdMiddleware,
     errorMiddleWare,
-    async (req: Request, res: Response) => {},
+    async (req: Request, res: Response) => {
+        const comment = await commentsQueryRepository.getCommentById(
+            req.params.id,
+        );
+
+        res.status(200).send(comment);
+    },
 );
 
 commentsRouter.put(
