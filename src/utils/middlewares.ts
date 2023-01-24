@@ -20,6 +20,7 @@ export const errorMiddleWare = (
     res: Response,
     next: NextFunction,
 ) => {
+    console.log('errorMiddleWare');
     const errors: Result = validationResult(req);
 
     const errorFields = errors
@@ -79,11 +80,12 @@ export const isCorrectCommentIdMiddleware = async (
     res: Response,
     next: NextFunction,
 ) => {
+    console.log('isCorrectCommentIdMiddleware');
     const comment: WithId<TComment> | null = await commentsCollection.findOne({
         id: req.params.id,
     });
     if (!comment) {
-        res.sendStatus(404);
+        res.sendStatus(HTTP_STATUS_CODES.NOT_FOUND_404);
     } else {
         next();
     }
@@ -94,6 +96,7 @@ export const isCorrectUserCommentMiddleware = async (
     res: Response,
     next: NextFunction,
 ) => {
+    console.log('isCorrectUserCommentMiddleware');
     const comment: WithId<TComment> | null = await commentsCollection.findOne({
         id: req.params.id,
     });
@@ -149,6 +152,7 @@ export const bearerAuthMiddleware = async (
     res: Response,
     next: NextFunction,
 ) => {
+    console.log(req.headers.authorization);
     if (!req.headers.authorization) {
         res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED_401);
 
@@ -157,6 +161,7 @@ export const bearerAuthMiddleware = async (
 
     const token = req.headers.authorization.split(' ')[1];
     const userId = jwtService.getUserIdByToken(token);
+    console.log(userId);
     if (userId) {
         const user = await userRepository.findUserById(userId);
         if (user) {

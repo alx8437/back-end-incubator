@@ -2,6 +2,7 @@ import { commentsCollection, postsCollection } from '../db';
 import { getPageCount, getSkipCount } from '../../utils';
 import { GetItemsPayload, TQueryParamsTypes } from '../types';
 import { TComment } from '../../services/comments-service';
+import { WithId } from 'mongodb';
 
 export const commentsQueryRepository = {
     async getCommentsByPostId(
@@ -29,5 +30,15 @@ export const commentsQueryRepository = {
             items: comments,
             pagesCount,
         };
+    },
+
+    async getCommentById(commentId: string): Promise<TComment | null> {
+        const comment: WithId<TComment> | null =
+            await commentsCollection.findOne(
+                { id: commentId },
+                { projection: { _id: 0, postId: 0 } },
+            );
+
+        return comment;
     },
 };

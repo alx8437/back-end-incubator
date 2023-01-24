@@ -4,6 +4,7 @@ import { Blog } from '../../services/blogs-service';
 import { app, HTTP_STATUS_CODES } from '../../index';
 import { User } from '../../services/user-service';
 import { GetItemsPayload, TQueryParams } from '../../repositories/types';
+import { TComment } from '../../services/comments-service';
 
 const queryParams: TQueryParams = {
     pageNumber: 1,
@@ -607,7 +608,9 @@ describe('Comments API', () => {
     let blog: Blog;
     let user: User;
     let token: string;
+    let comment: TComment;
 
+    // Post comment API
     // Create blog for posts
     it('create blog for posts', async () => {
         const blogBody = {
@@ -691,11 +694,13 @@ describe('Comments API', () => {
         const body = {
             content: 'content for comment should be minimum 20 symbols',
         };
-        await request(app)
+        const result = await request(app)
             .post(`/posts/${post.id}/comments`)
             .auth(token, { type: 'bearer' })
             .send(body)
             .expect(HTTP_STATUS_CODES.SUCCESS_CREATED_201);
+
+        comment = result.body;
     });
 
     // Should return error due to length content
@@ -723,9 +728,9 @@ describe('Comments API', () => {
     });
 
     // Should return unauthorized error
-    it('Should return error due to length content', async () => {
+    it('Should return unauthorized error', async () => {
         const body = {
-            content: 'few letters',
+            content: 'content for comment should be minimum 20 symbols',
         };
 
         await request(app)
@@ -734,4 +739,52 @@ describe('Comments API', () => {
             .send(body)
             .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401);
     });
+
+    // Test PUT comment API
+    // Should PUT comment
+    it('Should PUT comment', async () => {
+        const body = {
+            content: 'new changed content with minimum 20 symbols',
+        };
+        await request(app)
+            .put(`/comments/${comment.id}`)
+            .auth(token, { type: 'bearer' })
+            .send(body)
+            .expect(HTTP_STATUS_CODES.NO_CONTENT_SUCCESS_204);
+    });
+
+    it('Should get Unauthorized error', async () => {
+        const body = {
+            content: 'new changed content with minimum 20 symbols',
+        };
+        await request(app)
+            .put(`/comments/${comment.id}`)
+            .auth('aKetoken12312ad21ed!@3323', { type: 'bearer' })
+            .send(body)
+            .expect(HTTP_STATUS_CODES.UNAUTHORIZED_401);
+    });
+
+    it('Should get 400 error with little comment', async () => {
+        const body = {
+            content: 'little',
+        };
+
+        await request(app)
+            .put(`/comments/${comment.id}`)
+            .auth(token, { type: 'bearer' })
+            .send(body)
+            .expect(HTTP_STATUS_CODES.BAD_REQUEST_400);
+    });
+
+    // it('Should get 404 error with fake comment ID', async () => {
+    //     const body = {
+    //         content: 'little',
+    //     };
+    //
+    //     await request(app)
+    //         .put(`/comment/fakeId`)
+    //         .auth(token, { type: 'bearer' })
+    //         .send(body)
+    //         .expect(HTTP_STATUS_CODES.NOT_FOUND_404);
+    // });
 });
