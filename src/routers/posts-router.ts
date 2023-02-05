@@ -137,8 +137,6 @@ postsRouter.post(
         );
         if (comment) {
             res.status(HTTP_STATUS_CODES.SUCCESS_CREATED_201).send(comment);
-        } else {
-            res.sendStatus(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR_500);
         }
     },
 );

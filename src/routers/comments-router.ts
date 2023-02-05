@@ -42,8 +42,6 @@ commentsRouter.put(
 
         if (result) {
             res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_SUCCESS_204);
-        } else {
-            res.sendStatus(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR_500);
         }
     },
 );
@@ -59,8 +57,6 @@ commentsRouter.delete(
         const result: boolean = await commentsService.deleteById(req.params.id);
         if (result) {
             res.sendStatus(HTTP_STATUS_CODES.NO_CONTENT_SUCCESS_204);
-        } else {
-            res.sendStatus(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR_500);
         }
     },
 );

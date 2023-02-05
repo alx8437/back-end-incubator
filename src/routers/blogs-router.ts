@@ -83,7 +83,7 @@ blogsRouter.post(
                 blogId,
             });
 
-            newPost ? res.status(201).send(newPost) : res.send(500);
+            newPost && res.status(201).send(newPost);
         } else {
             res.sendStatus(404);
         }
