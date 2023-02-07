@@ -1,13 +1,13 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { postsRouter } from './routers/posts-router';
+// import { postsRouter } from './routers/posts-router';
 import { blogsRouter } from './routers/blogs-router';
 import { runDB } from './repositories/db';
-import { testingRouter } from './routers/testing-router';
-import { usersRouter } from './routers/users-router';
-import { authRouter } from './routers/auth-router';
-import { commentsRouter } from './routers/comments-router';
+// import { testingRouter } from './routers/testing-router';
+// import { usersRouter } from './routers/users-router';
+// import { authRouter } from './routers/auth-router';
+// import { commentsRouter } from './routers/comments-router';
 
 export const app = express();
 const corsMiddleware = cors();
@@ -38,12 +38,12 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Routers
-app.use('/posts', postsRouter);
+// app.use('/posts', postsRouter);
 app.use('/blogs', blogsRouter);
-app.use('/testing', testingRouter);
-app.use('/users', usersRouter);
-app.use('/auth', authRouter);
-app.use('/comments', commentsRouter);
+// app.use('/testing', testingRouter);
+// app.use('/users', usersRouter);
+// app.use('/auth', authRouter);
+// app.use('/comments', commentsRouter);
 
 const startApp = async () => {
     await runDB();

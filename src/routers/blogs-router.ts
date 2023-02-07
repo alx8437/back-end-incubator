@@ -57,7 +57,7 @@ blogsRouter.post(
         if (blog) {
             res.status(201).send(blog);
         } else {
-            return res.status(500);
+            return res.sendStatus(500);
         }
     },
 );
