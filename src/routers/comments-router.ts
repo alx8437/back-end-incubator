@@ -8,7 +8,7 @@ import {
 } from '../utils/middlewares';
 import { commentsService } from '../services/comments-service';
 import { HTTP_STATUS_CODES } from '../index';
-import { commentsQueryRepository } from '../repositories/queryRepositories/commentsQueryRepository';
+import { commentsQueryRepository } from '../repositories/query-repositories/commentsQueryRepository';
 
 export const commentsRouter = Router({});
 

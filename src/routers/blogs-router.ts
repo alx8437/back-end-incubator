@@ -20,7 +20,7 @@ import {
 } from '../utils/sanitizers';
 import { GetItemsPayload } from '../repositories/types';
 import { blogsRepository } from '../repositories/blogs-repository';
-import { blogsQueryRepository } from '../repositories/queryRepositories/blogsQueryRepository';
+import { blogsQueryRepository } from '../repositories/query-repositories/blogsQueryRepository';
 
 export const blogsRouter = Router({});
 

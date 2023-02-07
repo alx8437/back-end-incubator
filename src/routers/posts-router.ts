@@ -11,7 +11,7 @@ import {
     titleValidateMiddleware,
 } from '../utils/middlewares';
 import { Post, postsService } from '../services/posts-service';
-import { postQueryRepository } from '../repositories/queryRepositories/postQueryRepository';
+import { postQueryRepository } from '../repositories/query-repositories/post-query-repository';
 import { getQueryParams } from '../utils';
 import {
     pageNumberSanitizer,
@@ -23,7 +23,7 @@ import {
 import { GetItemsPayload } from '../repositories/types';
 import { commentsService, TComment } from '../services/comments-service';
 import { HTTP_STATUS_CODES } from '../index';
-import { commentsQueryRepository } from '../repositories/queryRepositories/commentsQueryRepository';
+import { commentsQueryRepository } from '../repositories/query-repositories/commentsQueryRepository';
 
 export const postsRouter = Router({});
 

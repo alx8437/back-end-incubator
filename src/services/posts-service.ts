@@ -1,6 +1,6 @@
 import { postDBRepository } from '../repositories/posts-repository';
 import { removeProperties } from '../utils';
-import { blogsQueryRepository } from '../repositories/queryRepositories/blogsQueryRepository';
+import { blogsQueryRepository } from '../repositories/query-repositories/blogsQueryRepository';
 
 export type Post = {
     id: string;
