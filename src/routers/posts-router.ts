@@ -11,7 +11,7 @@ import {
     titleValidateMiddleware,
 } from '../utils/middlewares';
 import { Post, postsService } from '../services/posts-service';
-import { postQueryRepository } from '../repositories/query-repositories/post-query-repository';
+import { postQueryRepository } from '../repositories/query-repositories/postQueryRepository';
 import { getQueryParams } from '../utils';
 import {
     pageNumberSanitizer,
