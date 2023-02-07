@@ -15,13 +15,12 @@ export const commentsQueryRepository = {
         const totalCount = await postsCollection.countDocuments();
         const pagesCount = getPageCount(totalCount, pageSize);
 
-        const comments: TComment[] =
-            (await commentsCollection
-                .find({ postId }, { projection: { _id: 0, postId: 0 } })
-                .sort(sortBy, sortDirection)
-                .skip(skipCount)
-                .limit(pageSize)
-                .toArray()) || [];
+        const comments: TComment[] = await commentsCollection
+            .find({ postId }, { projection: { _id: 0, postId: 0 } })
+            .sort(sortBy, sortDirection)
+            .skip(skipCount)
+            .limit(pageSize)
+            .toArray();
 
         return {
             pageSize,

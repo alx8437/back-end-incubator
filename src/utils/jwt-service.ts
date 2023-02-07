@@ -1,5 +1,5 @@
 import { User } from '../services/user-service';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 
 type TTokenPayload = {
     userId: string;

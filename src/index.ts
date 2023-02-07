@@ -1,6 +1,6 @@
-import express, { Request, Response } from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
+import { Request, Response } from 'express';
+const express = require('express');
+import * as cors from 'cors';
 // import { postsRouter } from './routers/posts-router';
 import { blogsRouter } from './routers/blogs-router';
 import { runDB } from './repositories/db';
@@ -12,12 +12,12 @@ import { runDB } from './repositories/db';
 export const app = express();
 const corsMiddleware = cors();
 
-app.use(
-    bodyParser.urlencoded({
-        extended: true,
-    }),
-);
-app.use(bodyParser.json());
+// app.use(
+//     bodyParser.urlencoded({
+//         extended: true,
+//     }),
+// );
+app.use(express.json());
 app.use(corsMiddleware);
 
 const port = process.env.PORT || 5000;

@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { TUserDBType, userRepository } from '../repositories/user-repository';
 import { ObjectId } from 'mongodb';
 import { removeProperties } from '../utils';
