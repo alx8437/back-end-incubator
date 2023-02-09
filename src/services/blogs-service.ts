@@ -7,6 +7,7 @@ export type Blog = {
     websiteUrl: string;
     createdAt: string;
     description: string;
+    isMembership: boolean;
 };
 
 export const blogsService = {
@@ -21,6 +22,7 @@ export const blogsService = {
             websiteUrl,
             createdAt: new Date().toISOString(),
             description,
+            isMembership: false,
         };
 
         const isCreated = await blogsRepository.createBlogger(newBlog);

@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express';
 import {
     basicAuthorizeMiddleware,
+    blogDescriptionMiddleware,
     blogNameValidateMiddleware,
     contentValidateMiddleware,
     errorMiddleWare,
@@ -45,6 +46,7 @@ blogsRouter.post(
     basicAuthorizeMiddleware,
     blogNameValidateMiddleware,
     websiteUrlValidateMiddleware,
+    blogDescriptionMiddleware,
     // should be last
     errorMiddleWare,
     async (req: Request, res: Response) => {

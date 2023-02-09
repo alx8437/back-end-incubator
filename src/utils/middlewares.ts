@@ -109,6 +109,10 @@ export const blogNameValidateMiddleware = body('name')
     .trim()
     .isLength({ min: 1, max: 15 });
 
+export const blogDescriptionMiddleware = body('description')
+    .trim()
+    .isLength({ max: 500 });
+
 export const websiteUrlValidateMiddleware = body('websiteUrl')
     .trim()
     .isURL()
