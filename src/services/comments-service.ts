@@ -2,11 +2,15 @@ import { User } from './user-service';
 import { commentDBRepository } from '../repositories/comment-repository';
 import { removeProperties } from '../utils';
 
+type TCommentatorInfo = {
+    userId: string;
+    userLogin: string;
+};
+
 export type TComment = {
     id: string;
     content: string;
-    userId: string;
-    userLogin: string;
+    commentatorInfo: TCommentatorInfo;
     createdAt: string;
     postId?: string;
 };
@@ -21,8 +25,10 @@ export const commentsService = {
         const newComment: TComment = {
             id: Number(new Date()).toString(),
             content: content,
-            userId: user.id,
-            userLogin: user.login,
+            commentatorInfo: {
+                userId: user.id,
+                userLogin: user.login,
+            },
             createdAt: new Date().toISOString(),
             postId: postId,
         };
