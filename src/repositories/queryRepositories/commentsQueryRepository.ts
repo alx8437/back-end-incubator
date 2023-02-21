@@ -12,7 +12,7 @@ export const commentsQueryRepository = {
         const { pageNumber, pageSize, sortBy, sortDirection } = queryParams;
 
         const skipCount = getSkipCount(pageNumber, pageSize);
-        const totalCount = await commentsCollection.countDocuments();
+        const totalCount = await commentsCollection.countDocuments({ postId });
         const pagesCount = getPageCount(totalCount, pageSize);
 
         const comments: TComment[] = await commentsCollection
