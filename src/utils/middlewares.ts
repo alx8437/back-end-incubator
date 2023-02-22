@@ -98,7 +98,7 @@ export const isCorrectUserCommentMiddleware = async (
         id: req.params.id,
     });
 
-    if (req.user.id !== comment?.userId) {
+    if (req.user.id !== comment?.commentatorInfo.userId) {
         res.sendStatus(403);
     } else {
         next();
