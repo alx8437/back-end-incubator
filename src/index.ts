@@ -10,12 +10,6 @@ import { commentsRouter } from './routers/comments-router';
 
 export const app = express();
 const corsMiddleware = cors();
-
-// app.use(
-//     bodyParser.urlencoded({
-//         extended: true,
-//     }),
-// );
 app.use(express.json());
 app.use(corsMiddleware);
 

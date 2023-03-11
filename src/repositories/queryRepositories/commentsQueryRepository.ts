@@ -1,4 +1,4 @@
-import { commentsCollection, postsCollection } from '../db';
+import { commentsCollection } from '../db';
 import { getPageCount, getSkipCount } from '../../utils';
 import { GetItemsPayload, TQueryParamsTypes } from '../types';
 import { TComment } from '../../services/comments-service';
