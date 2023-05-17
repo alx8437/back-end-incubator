@@ -7,6 +7,7 @@ import {
 import { User, userService } from '../services/user-service';
 import { HTTP_STATUS_CODES } from '../index';
 import { jwtService } from '../utils/jwt-service';
+import { businessService } from '../domain/business-service';
 
 export const authRouter = Router({});
 
@@ -15,6 +16,7 @@ type TAuthRequestBody = {
     password: string;
 };
 
+// login
 authRouter.post(
     '/login',
     passwordValidateMiddleware,
@@ -37,8 +39,26 @@ authRouter.post(
     },
 );
 
+// me auth
 authRouter.get('/me', bearerAuthMiddleware, (req: Request, res: Response) => {
     const { id, email, login } = req.user;
     const response = { id, email, login, createdAt: new Date().toISOString() };
     res.status(HTTP_STATUS_CODES.SUCCESS_200).send(response);
 });
+
+// registration
+authRouter.post('/registration', async (req: Request, res: Response) => {
+    const { email, login, password } = req.body;
+    const result = await businessService.createNewRegistration(
+        email,
+        login,
+        password,
+    );
+    res.send(result);
+});
+
+// registration-email-resending
+authRouter.post('/registration-email-resending');
+
+// registration-confirmation
+authRouter.post('/registration-confirmation');

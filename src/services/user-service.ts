@@ -55,9 +55,10 @@ export const userService = {
             return null;
         }
 
-        const hash = await this._getPasswordHash(password, user.passwordSalt);
+        const { passwordHash, passwordSalt } = user;
+        const hash = await this._getPasswordHash(password, passwordSalt);
 
-        if (hash === user.passwordHash) {
+        if (hash === passwordHash) {
             return user;
         }
 

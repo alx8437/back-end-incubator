@@ -166,7 +166,6 @@ export const bearerAuthMiddleware = async (
         if (user) {
             req.user = user;
             next();
-            return;
         } else {
             res.sendStatus(HTTP_STATUS_CODES.UNAUTHORIZED_401);
         }
