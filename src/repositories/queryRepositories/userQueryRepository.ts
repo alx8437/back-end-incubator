@@ -1,4 +1,4 @@
-import { User } from '../../services/user-service';
+import { User } from '../../services/auth-service';
 import { TQueryParamsTypes } from '../types';
 import { getPageCount, getSkipCount } from '../../utils';
 import { usersCollection } from '../db';

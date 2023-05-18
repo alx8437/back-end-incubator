@@ -6,7 +6,7 @@ import {
     loginValidateMiddleware,
     passwordValidateMiddleware,
 } from '../utils/middlewares';
-import { userService } from '../services/user-service';
+import { authService } from '../services/auth-service';
 import {
     pageNumberSanitizer,
     pageSizeSanitizer,
@@ -35,7 +35,7 @@ usersRouter.post(
     errorMiddleWare,
     async (req: Request, res: Response) => {
         const { email, password, login } = req.body;
-        const user = await userService.createUser(email, password, login);
+        const user = await authService.createUser(email, password, login);
 
         if (user) {
             res.status(201).send(user);

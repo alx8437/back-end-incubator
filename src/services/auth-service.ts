@@ -10,7 +10,7 @@ export type User = {
     createdAt: string;
 };
 
-export const userService = {
+export const authService = {
     async createUser(
         email: string,
         password: string,

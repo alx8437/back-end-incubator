@@ -4,10 +4,9 @@ import {
     errorMiddleWare,
     passwordValidateMiddleware,
 } from '../utils/middlewares';
-import { User, userService } from '../services/user-service';
+import { User, authService } from '../services/auth-service';
 import { HTTP_STATUS_CODES } from '../index';
 import { jwtService } from '../utils/jwt-service';
-import { businessService } from '../domain/business-service';
 
 export const authRouter = Router({});
 
@@ -24,7 +23,7 @@ authRouter.post(
     errorMiddleWare,
     async (req: Request, res: Response) => {
         const { loginOrEmail, password } = req.body as TAuthRequestBody;
-        const user: User | null = await userService.checkCredentials(
+        const user: User | null = await authService.checkCredentials(
             loginOrEmail,
             password,
         );
@@ -49,11 +48,7 @@ authRouter.get('/me', bearerAuthMiddleware, (req: Request, res: Response) => {
 // registration
 authRouter.post('/registration', async (req: Request, res: Response) => {
     const { email, login, password } = req.body;
-    const result = await businessService.createNewRegistration(
-        email,
-        login,
-        password,
-    );
+    const result = await authService.createUser(email, login, password);
     res.send(result);
 });
 

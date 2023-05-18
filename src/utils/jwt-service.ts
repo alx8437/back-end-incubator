@@ -1,4 +1,4 @@
-import { User } from '../services/user-service';
+import { User } from '../services/auth-service';
 import * as jwt from 'jsonwebtoken';
 
 type TTokenPayload = {

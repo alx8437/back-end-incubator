@@ -1,4 +1,4 @@
-import { User } from './user-service';
+import { User } from './auth-service';
 import { commentDBRepository } from '../repositories/comment-repository';
 import { removeProperties } from '../utils';
 
